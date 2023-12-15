@@ -1,0 +1,40 @@
+{
+  "configurePresets": [
+    {
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
+      "condition": {
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows",
+        "type": "equals"
+      },
+      "generator": "Ninja",
+      "hidden": true,
+      "name": "windows-base"
+    },
+    {
+      "architecture": {
+        "strategy": "external",
+        "value": "x86"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "displayName": "x86 Debug",
+      "inherits": "windows-base",
+      "name": "x86-debug"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "displayName": "x86 Release",
+      "inherits": "x86-debug",
+      "name": "x86-release"
+    }
+  ],
+  "version": 3
+}

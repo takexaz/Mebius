@@ -1,0 +1,22 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "dll",
+      "exe": "${workspaceRoot}\\debug\\mugen.exe",
+      "currentDir": "${workspaceRoot}\\debug",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Mebius.dll",
+      "name": "Mebius.dll"
+    },
+    {
+      "type": "dll",
+      "exe": "${workspaceRoot}\\debug\\mugen.exe",
+      "currentDir": "${workspaceRoot}\\debug",
+      "project": "CMakeLists.txt",
+      "projectTarget": "DINPUT.dll (preloader\\DINPUT\\DINPUT.dll)",
+      "name": "DINPUT.dll (preloader\\DINPUT\\DINPUT.dll)"
+    }
+  ]
+}
