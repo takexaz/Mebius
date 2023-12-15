@@ -6,12 +6,15 @@ file (GLOB src src/*.cpp src/*.c)
 file (GLOB include include/*.hpp include/*.h)
 file (GLOB include include/*.def)
 
+include_directories(deps/tomlplusplus/include)
+
 add_library (
 	${PROJECT_NAME} SHARED
 	${src}
 	${include}
 )
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
 add_subdirectory(preloader/DINPUT)
 
 set(DEBUG_DIR "${CMAKE_SOURCE_DIR}/debug")
@@ -31,7 +34,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E remove -f "${DEBUG_DIR}/${PROJECT_NAME}.pdb"
 )
 ENDIF()
-	
+
 target_compile_features (${PROJECT_NAME} PUBLIC cxx_std_20)
 target_compile_definitions (
 	${PROJECT_NAME}
@@ -141,6 +144,11 @@ install (
 
 install (
 	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/
+	DESTINATION include
+)
+
+install (
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/deps/tomlplusplus/include/toml++
 	DESTINATION include
 )
 

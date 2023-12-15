@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <Windows.h>
 
 #ifdef MEBIUS_EXPORT
 #define MEBIUSAPI __declspec(dllexport)
