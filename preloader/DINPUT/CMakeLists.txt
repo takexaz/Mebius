@@ -40,8 +40,6 @@ target_compile_features (${PROJECT_NAME} PUBLIC cxx_std_20)
 target_compile_definitions (
 	${PROJECT_NAME}
 	PRIVATE
-	WIN32
-	_WINDOWS
 	UNICODE
 	_UNICODE
 	$<$<CONFIG:Debug>: 
