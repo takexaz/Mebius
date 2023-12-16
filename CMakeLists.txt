@@ -4,7 +4,6 @@ project (Mebius VERSION 0.1.0 LANGUAGES CXX)
 
 file (GLOB src src/*.cpp src/*.c)
 file (GLOB include include/*.hpp include/*.h)
-file (GLOB include include/*.def)
 
 include_directories(deps/tomlplusplus/include)
 
@@ -40,8 +39,6 @@ target_compile_definitions (
 	${PROJECT_NAME}
 	PRIVATE
 	MEBIUS_EXPORT
-	WIN32
-	_WINDOWS
 	UNICODE
 	_UNICODE
 	$<$<CONFIG:Debug>: 
