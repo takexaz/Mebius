@@ -17,7 +17,7 @@ namespace mebius::config {
 
 			struct CF_CONSOLE {
 				bool Enable = false;
-				bool Log = false;
+				bool Default = false;
 				bool Error = false;
 			};
 			CF_CONSOLE Console;
