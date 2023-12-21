@@ -4,7 +4,6 @@ project (Mebius VERSION 0.1.0 LANGUAGES CXX)
 
 file (GLOB src src/*.cpp src/*.c)
 file (GLOB include include/*.hpp include/*.h)
-
 include_directories(deps/tomlplusplus/include)
 
 add_library (
@@ -13,7 +12,11 @@ add_library (
 	${include}
 )
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} PRIVATE Zydis)
 
+option(ZYDIS_BUILD_TOOLS "" OFF)
+option(ZYDIS_BUILD_EXAMPLES "" OFF)
+add_subdirectory("deps/zydis" EXCLUDE_FROM_ALL)
 add_subdirectory(preloader/DINPUT)
 
 set(DEBUG_DIR "${CMAKE_SOURCE_DIR}/debug")
