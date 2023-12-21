@@ -5,50 +5,35 @@
 #define BUFSIZE 1024
 #define MD5LEN  16
 
-void Mebius::Utility::check_mugen(void) {
-    Mebius::Debug::Logger meblog(std::cout, FOREGROUND_LIME);
-    Mebius::Debug::Logger meberr(std::cerr, FOREGROUND_PINK);
+bool mebius::util::checksum(void) {
+    mebius::debug::Logger meblog(std::cout, FOREGROUND_LIME);
+    mebius::debug::Logger meberr(std::cerr, FOREGROUND_PINK);
 
     // ハッシュを計算
     std::string md5 = calc_md5_self();
 
     // ハッシュログを表示
     if (md5.empty()) {
-        return;
+        return false;
     }
 
     // 実行ファイルのハッシュから本体を識別
-    if (!is_mugen(md5)) {
-        meberr << "Unregistered executable file detected." << std::endl;
-        meberr << std::format("MD5Hash: {}", md5) << std::endl;
-        return;
-    }
-    else {
-        meblog << "Registered executable." << std::endl;
+    try {
+        meblog << std::format("Registered WINMUGEN: {}", MUGEN_HASH_LIST.at(md5)) << std::endl;
         meblog << std::format("MD5Hash: {}", md5) << std::endl;
-    }
-
-    return;
-}
-
-bool Mebius::Utility::is_mugen(std::string md5) {
-    // std::findを使用して文字列を検索
-    auto it = std::find(MUGEN_HASH_LIST.begin(), MUGEN_HASH_LIST.end(), md5);
-
-    // 文字列が見つかったかどうかを判定
-    if (it != MUGEN_HASH_LIST.end()) {
-        // 文字列が含まれている場合
         return true;
     }
-    else {
-        // 文字列が含まれていない場合
+    catch (const std::out_of_range& e) {
+        meberr << "Unregistered WINMUGEN." << std::endl;
+        meberr << std::format("MD5Hash: {}", md5) << std::endl;
         return false;
     }
+
 }
 
-std::string Mebius::Utility::calc_md5_self()
+std::string mebius::util::calc_md5_self()
 {
-    Mebius::Debug::Logger utilerr(std::cerr, FOREGROUND_PINK);
+    mebius::debug::Logger utilerr(std::cerr, FOREGROUND_PINK);
     std::string md5{};
 
     DWORD dwStatus = 0;

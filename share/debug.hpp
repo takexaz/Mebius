@@ -16,7 +16,7 @@
 #define FOREGROUND_YELLOW FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY
 #define FOREGROUND_WHITE FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE
 
-namespace Mebius::Debug {
+namespace mebius::debug {
     class MEBIUSAPI Logger {
     private:
         static HANDLE _hConsole;
