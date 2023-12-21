@@ -1,6 +1,6 @@
 #include <_dinput.h>
 
-static Mebius::Wrap::WrapLibrary dinput("dinput.dll");
+static mebius::wrap::WrapLibrary dinput("dinput.dll");
 
 HRESULT WINAPI DirectInputCreateA(HINSTANCE hinst, DWORD dwVersion, LPDIRECTINPUTA * ppDI, LPUNKNOWN punkOuter)
 {

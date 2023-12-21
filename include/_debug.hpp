@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <iostream>
 
-namespace Mebius::Debug {
+namespace mebius::debug {
     class Console {
     private:
         static Console* _instance;

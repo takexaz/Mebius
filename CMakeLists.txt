@@ -86,33 +86,6 @@ ELSE (CMAKE_CXX_FLAGS MATCHES "/GR")
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
 ENDIF (CMAKE_CXX_FLAGS MATCHES "/GR")
 
-target_link_options (
-	${PROJECT_NAME}
-	PRIVATE
-	/LTCG
-	/nologo
-	$<$<CONFIG:Debug>:
-		/nodefaultlib:libucrtd.lib
-		/debug
-		/opt:noref
-	>
-	$<$<CONFIG:Release>:
-		/nodefaultlib:libucrt.lib
-		/opt:ref
-	>
-)
-
-target_link_libraries (
-	${PROJECT_NAME}
-	PRIVATE
-	$<$<CONFIG:Debug>:
-		ucrtd.lib
-	>
-	$<$<CONFIG:Release>:
-		ucrt.lib
-	>
-)
-
 target_include_directories (
 	${PROJECT_NAME}
 	PRIVATE

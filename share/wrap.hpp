@@ -7,7 +7,7 @@
 #define MEBIUSAPI __declspec(dllimport)
 #endif
 
-namespace Mebius::Wrap {
+namespace mebius::wrap {
     class MEBIUSAPI WrapLibrary
     {
     private:

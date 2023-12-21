@@ -1,7 +1,7 @@
 #pragma once
 #include <toml++/toml.hpp>
 
-namespace Mebius::Config {
+namespace mebius::config {
 	const static char* conf_mebius_path = "mods\\mebius.toml";
 
 
@@ -9,6 +9,7 @@ namespace Mebius::Config {
 
 		struct CF_OPTIONS {
 			bool Enable = false;
+			bool BypassCheckSum = false;
 		};
 		CF_OPTIONS Options;
 
