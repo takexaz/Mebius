@@ -1,7 +1,9 @@
 #pragma once
 #include <Windows.h>
 #include <iostream>
-#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
 #include <wincon.h>
 
 #ifdef MEBIUS_EXPORT
@@ -22,18 +24,26 @@ namespace mebius::debug {
         static HANDLE _hConsole;
         static char16_t _default_color;
         std::ostream& _stream;
+        static std::ofstream _log;
         char16_t _color = FOREGROUND_WHITE;
 
         static HANDLE get_console_handle(void) {
             if (!_hConsole) _hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
             return _hConsole;
         }
-    public:
-        Logger(std::ostream& _stream) : _stream(_stream) {
-            set_color(FOREGROUND_WHITE);
-        }
 
+    public:
         Logger(std::ostream& _stream, char16_t color) : _stream(_stream) {
+            if (!_log.is_open()) {
+                std::ofstream ofs("mebius.log");
+                ofs << "\n\n";
+                ofs << "--------------------------------\n";
+                ofs << "MEBIUS ver 2023.12.24 status log\n";
+                ofs << "--------------------------------\n";
+                ofs.flush();
+                ofs.close();
+                _log.open("mebius.log", std::ios::app);
+            }
             set_color(color);
         }
 
@@ -45,16 +55,16 @@ namespace mebius::debug {
             _default_color = color;
         }
 
-        static std::string print_time() {
-            std::time_t t = std::time(nullptr);
-            std::string test = "[";
-            test += static_cast<std::ostringstream&&>(std::ostringstream() << std::put_time(std::localtime(&t), "%F %T")).str();
-            test += "] ";
-            return test;
-        }
-
         template <typename T>
         std::ostream& operator<<(const T& thing) {
+            // ファイル出力
+            {
+                std::stringstream buf;
+                buf << thing;
+                _log << buf.str() << '\n';
+                _log.flush();
+            }
+
             HANDLE hConsole = get_console_handle();
             if (!hConsole) {
                 return this->_stream << thing;
