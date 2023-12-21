@@ -36,6 +36,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		break;
 	}
 	case DLL_PROCESS_DETACH: {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_CYAN);
+		meblog << "Denitializing Mebius." << std::endl;
 		break;
 	}
 	}
