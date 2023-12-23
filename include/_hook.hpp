@@ -4,7 +4,7 @@
 
 #include <unordered_map>
 
-namespace mebius {
+namespace mebius::hook {
 	using code_t = uint8_t;
 
 	constexpr static inline code_t _OPCODE_REL_CALL = 0xE8;
