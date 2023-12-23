@@ -10,13 +10,14 @@
 #include <format>
 
 using namespace mebius;
+using namespace mebius::hook;
 
 static inline code_t* make_trampoline_code(uint32_t address) noexcept;
 static inline std::pair<bool, HookDataImpl&> add_hook_data(uint32_t address) noexcept;
 static inline void write_call_opcode(uint32_t address, const void* func);
 static inline void write_jmp_opcode(uint32_t address, const void* func) noexcept;
 
-MEBIUSAPI const HookData& mebius::_GetHookData(uint32_t address)
+MEBIUSAPI const HookData& mebius::hook::_GetHookData(uint32_t address)
 {
 	decltype(_HOOK_LIST)::iterator it = _HOOK_LIST.find(address);
 	if (it == _HOOK_LIST.end()) {
@@ -27,7 +28,7 @@ MEBIUSAPI const HookData& mebius::_GetHookData(uint32_t address)
 	}
 }
 
-MEBIUSAPI const HookData* mebius::_GetHookDataNullable(uint32_t address) noexcept
+MEBIUSAPI const HookData* mebius::hook::_GetHookDataNullable(uint32_t address) noexcept
 {
 	decltype(_HOOK_LIST)::iterator it = _HOOK_LIST.find(address);
 	if (it == _HOOK_LIST.end()) {
@@ -38,7 +39,7 @@ MEBIUSAPI const HookData* mebius::_GetHookDataNullable(uint32_t address) noexcep
 	}
 }
 
-MEBIUSAPI void mebius::_SetHookOnHead(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept
+MEBIUSAPI void mebius::hook::_SetHookOnHead(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept
 {
 	auto [unhooked, hook] = add_hook_data(hookTarget);
 	hook.AppendHeadHook(hookFunction);
@@ -52,7 +53,7 @@ MEBIUSAPI void mebius::_SetHookOnHead(uint32_t hookTarget, const void* hookFunct
 	}
 }
 
-MEBIUSAPI void mebius::_SetHookOnTail(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept
+MEBIUSAPI void mebius::hook::_SetHookOnTail(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept
 {
 	auto [unhooked, hook] = add_hook_data(hookTarget);
 	hook.AppendTailHook(hookFunction);

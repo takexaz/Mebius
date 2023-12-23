@@ -12,7 +12,7 @@
 #define MEBIUSAPI __declspec(dllimport)
 #endif
 
-namespace mebius {
+namespace mebius::hook {
 	using code_t = uint8_t;
 
 	class HookData {

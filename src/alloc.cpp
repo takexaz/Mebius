@@ -25,12 +25,10 @@ mebius::alloc::SmallPool::Pool() {
 
 template <>
 mebius::alloc::SmallPool::~Pool() noexcept {
-	// MessageBoxA(nullptr, "Small pool destructor start", nullptr, MB_OK);
 	if (this->nodes != nullptr) {
 		(this->nodes)->~SmallPoolNode();
 		VirtualFree(this->nodes, 0, MEM_RELEASE);
 	}
-	// MessageBoxA(nullptr, "Small pool destructor end", nullptr, MB_OK);
 }
 
 template <>

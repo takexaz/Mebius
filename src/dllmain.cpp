@@ -44,6 +44,13 @@ namespace test_str {
 	}
 }
 
+namespace patch {
+	void patch_WM_private_beta(PCONTEXT context) {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
+		meblog << "PATCHED!!" << std::endl;
+	}
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 {
 	switch (fdwReason)
@@ -70,18 +77,20 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 
 		{
 			using namespace test_void;
-			mebius::HookOnHead(hook, head);
-			mebius::HookOnTail(hook, tail);
+			mebius::hook::HookOnHead(hook, head);
+			mebius::hook::HookOnTail(hook, tail);
 			hook();
 		}
 
-
 		{
 			using namespace test_str;
-			mebius::HookOnHead(hook, head);
-			mebius::HookOnTail(hook, tail);
+			mebius::hook::HookOnHead(hook, head);
+			mebius::hook::HookOnTail(hook, tail);
 			hook(0xFFFFFFFF);
 		}
+
+		// 004C37A0
+		mebius::inline_hook::HookInlineVEH(0x4C38FC, patch::patch_WM_private_beta);
 
 		break;
 	}
