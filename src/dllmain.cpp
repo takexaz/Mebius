@@ -1,7 +1,48 @@
 
 #include <Windows.h>
 #include <Mebius.hpp>
-#include <_Mebius.hpp>
+
+#include <_config.hpp>
+#include <_debug.hpp>
+#include <_utility.hpp>
+
+#include <iostream>
+
+namespace test_void {
+	void hook(void) {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
+		meblog << "Function" << std::endl;
+		return;
+	}
+
+	void head(void) {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
+		meblog << "Function_Head" << std::endl;
+	}
+
+	void tail(void) {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
+		meblog << "Function_Tail" << std::endl;
+	}
+}
+
+namespace test_str {
+	void hook(int num) {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
+		meblog << std::format("Function({})", num) << std::endl;
+		return;
+	}
+
+	void head(int num) {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
+		meblog << std::format("Function_head({})", num) << std::endl;
+	}
+
+	void tail(int num) {
+		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
+		meblog << std::format("Function_tail({})", num) << std::endl;
+	}
+}
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 {
@@ -25,6 +66,21 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		if (!is_mugen && conf.Options.BypassCheckSum) {
 			mebwarn << "WARNING: Bypass CheckSum!" << std::endl;
 			return TRUE;
+		}
+
+		{
+			using namespace test_void;
+			mebius::HookOnHead(hook, head);
+			mebius::HookOnTail(hook, tail);
+			hook();
+		}
+
+
+		{
+			using namespace test_str;
+			mebius::HookOnHead(hook, head);
+			mebius::HookOnTail(hook, tail);
+			hook(0xFFFFFFFF);
 		}
 
 		break;
