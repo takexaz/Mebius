@@ -1,5 +1,4 @@
-#include <Mebius.hpp>
-#include <_Mebius.hpp>
+#include <_config.hpp>
 
 namespace mebius::config {
 	bool get_bool_from_key(toml::table tbl, const char* key) {

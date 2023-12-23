@@ -25,12 +25,12 @@ mebius::alloc::SmallPool::Pool() {
 
 template <>
 mebius::alloc::SmallPool::~Pool() noexcept {
-	MessageBoxA(nullptr, "Small pool destructor start", nullptr, MB_OK);
+	// MessageBoxA(nullptr, "Small pool destructor start", nullptr, MB_OK);
 	if (this->nodes != nullptr) {
 		(this->nodes)->~SmallPoolNode();
 		VirtualFree(this->nodes, 0, MEM_RELEASE);
 	}
-	MessageBoxA(nullptr, "Small pool destructor end", nullptr, MB_OK);
+	// MessageBoxA(nullptr, "Small pool destructor end", nullptr, MB_OK);
 }
 
 template <>
@@ -123,7 +123,12 @@ inline code_t* mebius::alloc::CodeAllocator::AllocateFromLargePool() noexcept
 }
 
 void mebius::alloc::CodeAllocator::DeAllocate(code_t* ptr) noexcept {
-	if (ptr != nullptr) {
+	MEMORY_BASIC_INFORMATION info = {};
+	if (!VirtualQuery(ptr, &info, _MEM_PAGE_SIZE)) {
+		return;
+	}
+
+	if (ptr != nullptr && info.State != MEM_FREE) {
 		auto it = used.find(ptr);
 		if (it != used.end()) {
 			it->second.Free(ptr);

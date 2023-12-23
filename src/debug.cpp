@@ -1,5 +1,4 @@
-#include <Mebius.hpp>
-#include <_Mebius.hpp>
+#include <_debug.hpp>
 
 namespace mebius::debug {
     HANDLE Logger::_hConsole = nullptr;
