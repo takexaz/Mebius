@@ -4,11 +4,19 @@
 
 #include <unordered_map>
 
+
+// クッション
+extern "C" void hook_inline_cushion();
+// ASM用に宣言
+extern "C" inline const void hook_inline(const mebius::inline_hook::PMBCONTEXT context);
+
 namespace mebius::inline_hook {
 	using code_t = uint8_t;
 
 	constexpr static inline code_t _OPCODE_EX_HALT = 0xF4;
+	constexpr static inline code_t _OPCODE_REL_CALL = 0xE8;
 	constexpr static inline code_t _OPCODE_REL_JMP = 0xE9;
+
 
 	class InlineHookDataImpl : public InlineHookData {
 	public:

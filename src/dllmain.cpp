@@ -45,7 +45,23 @@ namespace test_str {
 }
 
 namespace patch {
-	void patch_WM_private_beta(PCONTEXT context) {
+	void change_version(mebius::inline_hook::PMBCONTEXT context) {
+		const static char* version = "Beta %i.%02i.%02i : MEBIUS";
+		void** stack = (void**)context->Esp;
+		*stack = (void*)version;
+	}
+
+	static uint8_t col = 0;
+	void test(mebius::inline_hook::PMBCONTEXT context) {
+		mebius::debug::Logger meblog(std::cout, col++);
+		meblog << "TRIGGER!!" << std::endl;
+
+	}
+
+	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
+		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
+		mebius::inline_hook::HookInline(0x0047aa60, patch::test);
+
 		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
 		meblog << "PATCHED!!" << std::endl;
 	}
@@ -69,28 +85,14 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 
 		// MUGENのバージョンをチェック
 		mebius::debug::Logger mebwarn(std::cout, FOREGROUND_YELLOW);
-		bool is_mugen = mebius::util::checksum();
-		if (!is_mugen && conf.Options.BypassCheckSum) {
+		uint32_t patch_addr = mebius::util::detect_mugen();
+		if (patch_addr == 0xFFFFFFFF && conf.Options.BypassCheckSum) {
 			mebwarn << "WARNING: Bypass CheckSum!" << std::endl;
-			return TRUE;
+			patch_addr = mebius::util::default_entry_point;
 		}
 
-		{
-			using namespace test_void;
-			mebius::hook::HookOnHead(hook, head);
-			mebius::hook::HookOnTail(hook, tail);
-			hook();
-		}
-
-		{
-			using namespace test_str;
-			mebius::hook::HookOnHead(hook, head);
-			mebius::hook::HookOnTail(hook, tail);
-			hook(0xFFFFFFFF);
-		}
-
-		// 004C37A0
-		mebius::inline_hook::HookInlineVEH(0x4C38FC, patch::patch_WM_private_beta);
+		// プラグインロード用インラインフック
+		mebius::inline_hook::HookInline(patch_addr, patch::init_plugin, true);
 
 		break;
 	}

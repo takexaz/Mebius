@@ -17,6 +17,21 @@
 namespace mebius::inline_hook {
 	using code_t = uint8_t;
 
+	struct MBCONTEXT
+	{
+		uint32_t 	EFlags;
+		uint32_t	Edi;
+		uint32_t 	Esi;
+		uint32_t	Ebp;
+		uint32_t 	Esp;
+		uint32_t  	Ebx;
+		uint32_t 	Edx;
+		uint32_t 	Ecx;
+		uint32_t 	Eax;
+		uint32_t 	Eip;
+	};
+	using PMBCONTEXT = MBCONTEXT*;
+
 	class InlineHookData {
 	public:
 		virtual ~InlineHookData() = default;
@@ -26,12 +41,15 @@ namespace mebius::inline_hook {
 
 	MEBIUSAPI const InlineHookData& _GetInlineHookData(uint32_t address);
 	MEBIUSAPI const InlineHookData* _GetInlineHookDataNullable(uint32_t address) noexcept;
-	MEBIUSAPI void _SetHookVEH(uint32_t hookTarget, const void* hookFunction) noexcept;
+	MEBIUSAPI void _SetInlineHook(uint32_t hookTarget, const void* hookFunction, bool isVEH) noexcept;
 
 	namespace internal {
-		using pvfc_t = void(*)(PCONTEXT);
+		using pvfc_t = void(*)(PMBCONTEXT);
 	}
-	static void HookInlineVEH(uint32_t address, const internal::pvfc_t callee) noexcept {
-		_SetHookVEH(address, std::bit_cast<const void*>(callee));
+	static void HookInline(uint32_t address, const internal::pvfc_t callee) noexcept {
+		_SetInlineHook(address, std::bit_cast<const void*>(callee), false);
+	}
+	static void HookInline(uint32_t address, const internal::pvfc_t callee, bool isVEH) noexcept {
+		_SetInlineHook(address, std::bit_cast<const void*>(callee), isVEH);
 	}
 }

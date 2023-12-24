@@ -116,6 +116,7 @@ static inline void write_call_opcode(uint32_t address, const void* func) {
 	VirtualProtect(ptr, 5, oldProtect, &oldProtect);
 }
 
+
 static inline void write_jmp_opcode(uint32_t address, const void* func) noexcept {
 	auto ptr = std::bit_cast<code_t*>(address);
 	ptr[0] = _OPCODE_REL_JMP;
