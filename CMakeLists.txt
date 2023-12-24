@@ -1,8 +1,10 @@
 cmake_minimum_required (VERSION 3.15)
 
 project (Mebius VERSION 0.1.0 LANGUAGES CXX)
+enable_language(ASM_MASM)
 
 file (GLOB src src/*.cpp src/*.c)
+file (GLOB asm src/asm/*.asm)
 file (GLOB include include/*.hpp include/*.h)
 include_directories(deps/tomlplusplus/include)
 
@@ -10,6 +12,7 @@ add_library (
 	${PROJECT_NAME} SHARED
 	${src}
 	${include}
+	${asm}
 )
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE Zydis)

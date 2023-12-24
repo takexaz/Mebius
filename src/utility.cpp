@@ -6,7 +6,10 @@
 #define BUFSIZE 1024
 #define MD5LEN  16
 
-bool mebius::util::checksum(void) {
+
+
+
+uint32_t mebius::util::detect_mugen(void) {
     mebius::debug::Logger meblog(std::cout, FOREGROUND_LIME);
     mebius::debug::Logger meberr(std::cerr, FOREGROUND_PINK);
 
@@ -20,14 +23,15 @@ bool mebius::util::checksum(void) {
 
     // 実行ファイルのハッシュから本体を識別
     try {
-        meblog << std::format("Registered WINMUGEN: {}", MUGEN_HASH_LIST.at(md5)) << std::endl;
+        auto result = MUGEN_HASH_LIST.at(md5);
+        meblog << std::format("Registered WINMUGEN: {}", result.first) << std::endl;
         meblog << std::format("MD5Hash: {}", md5) << std::endl;
-        return true;
+        return result.second;
     }
     catch (const std::out_of_range& e) {
         meberr << "Unregistered WINMUGEN." << std::endl;
         meberr << std::format("MD5Hash: {}", md5) << std::endl;
-        return false;
+        return 0xFFFFFFFF;
     }
 
 }
