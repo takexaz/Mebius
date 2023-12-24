@@ -46,21 +46,20 @@ namespace test_str {
 
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
-		const static char* version = "Beta %i.%02i.%02i : MEBIUS";
-		void** stack = (void**)context->Esp;
-		*stack = (void*)version;
-	}
-
-	static uint8_t col = 0;
-	void test(mebius::inline_hook::PMBCONTEXT context) {
-		mebius::debug::Logger meblog(std::cout, col++);
-		meblog << "TRIGGER!!" << std::endl;
-
+		static uint32_t frame = 0;
+		++frame;
+		const static char* mb_version = "MEBIUS %i.%02i.%02i";
+		if (frame % 800 < 400) {
+			void** stack = (void**)context->Esp;
+			*(stack + 1) = (void*)2023;
+			*(stack + 2) = (void*)12;
+			*(stack + 3) = (void*)24;
+			*stack = (void*)mb_version;
+		}
 	}
 
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
-		mebius::inline_hook::HookInline(0x0047aa60, patch::test);
 
 		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
 		meblog << "PATCHED!!" << std::endl;
@@ -91,7 +90,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 			patch_addr = mebius::util::default_entry_point;
 		}
 
-		// プラグインロード用インラインフック
+		// プラグインロード用インラインフック(VEH)
 		mebius::inline_hook::HookInline(patch_addr, patch::init_plugin, true);
 
 		break;
