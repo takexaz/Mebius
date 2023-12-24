@@ -1,0 +1,19 @@
+# 大文字小文字は別の文字として処理されます！
+# Aaaaaaa や Aaaaa.Bbbbb と記述してください
+
+[Options]
+# Mebius自体の有効/無効
+Enable = true
+# MUGENのバージョンチェックの有効/無効
+# 無効にした場合クラッシュする場合があります
+# 対応バージョン
+# - WinMugen-Hi
+# - WinMugenPlus
+BypassCheckSum = true
+
+[Debug]
+# コンソールの有効/無効
+Console.Enable = true
+# Mebiusが出力するコンソールログの有効/無効
+Console.Default = true
+Console.Error = true
