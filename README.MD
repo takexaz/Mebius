@@ -6,6 +6,10 @@ Plugin loader for winmugen.
 
 MIT
 
-# tomlplusplus
+### tomlplusplus
 
 https://github.com/marzer/tomlplusplus
+
+### zydis
+
+https://github.com/zyantific/zydis
