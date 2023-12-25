@@ -1,32 +1,33 @@
 #pragma once
+
+#include <debug.hpp>
+#include <config.hpp>
 #include <toml++/toml.hpp>
 
 namespace mebius::config {
-	const static char* conf_mebius_path = "mods\\mebius.toml";
+	class Config::ConfigImpl {
+	public:
+		ConfigImpl(const char* path) : _tbl(toml::parse_file(path)) {}
 
-
-	struct CF_MEBIUS {
-
-		struct CF_OPTIONS {
-			bool Enable = false;
-			bool BypassCheckSum = false;
-		};
-		CF_OPTIONS Options;
-
-		struct CF_DEBUG {
-
-			struct CF_CONSOLE {
-				bool Enable = false;
-				bool Default = false;
-				bool Error = false;
-			};
-			CF_CONSOLE Console;
-
-		};
-		CF_DEBUG Debug;
+		template <typename T>
+		bool get_value_from_key_impl(const char* key, T& ptr) noexcept {
+			mebius::debug::Logger cerr(std::cout, FOREGROUND_PINK);
+			try {
+				auto node = _tbl.at_path(key);
+				if (node.is<T>()) {
+					ptr = node.ref<T>();
+					return true;
+				}
+				cerr << std::format("[{}] is not [{}]", key, typeid(T).name()) << std::endl;
+				return false;
+			}
+			catch (const toml::parse_error& err)
+			{
+				cerr << err.what() << std::endl;
+				return false;
+			}
+		}
+	private:
+		toml::table _tbl;
 	};
-
-
-	bool get_bool_from_key(toml::table tbl, const char* key);
-	CF_MEBIUS get_config(void);
 }

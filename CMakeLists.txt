@@ -123,11 +123,6 @@ install (
 	DESTINATION include
 )
 
-install (
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/deps/tomlplusplus/include/toml++
-	DESTINATION include
-)
-
 include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file (

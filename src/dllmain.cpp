@@ -2,47 +2,10 @@
 #include <Windows.h>
 #include <Mebius.hpp>
 
-#include <_config.hpp>
 #include <_debug.hpp>
 #include <_utility.hpp>
 
 #include <iostream>
-
-namespace test_void {
-	void hook(void) {
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
-		meblog << "Function" << std::endl;
-		return;
-	}
-
-	void head(void) {
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
-		meblog << "Function_Head" << std::endl;
-	}
-
-	void tail(void) {
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
-		meblog << "Function_Tail" << std::endl;
-	}
-}
-
-namespace test_str {
-	void hook(int num) {
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
-		meblog << std::format("Function({})", num) << std::endl;
-		return;
-	}
-
-	void head(int num) {
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
-		meblog << std::format("Function_head({})", num) << std::endl;
-	}
-
-	void tail(int num) {
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
-		meblog << std::format("Function_tail({})", num) << std::endl;
-	}
-}
 
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
@@ -66,16 +29,43 @@ namespace patch {
 	}
 }
 
+struct CF_MEBIUS {
+	struct CF_OPTIONS {
+		bool Enable = false;
+		bool BypassCheckSum = false;
+	};
+	CF_OPTIONS Options;
+
+	struct CF_CONSOLE {
+		bool Enable = false;
+		bool Default = false;
+		bool Error = false;
+	};
+	CF_CONSOLE Console;
+};
+
+const static char* conf_mebius_path = "mods\\mebius.toml";
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 {
 	switch (fdwReason)
 	{
 	case DLL_PROCESS_ATTACH: {
 		// Configを読み込んで各種設定を行う
-		mebius::config::CF_MEBIUS conf = mebius::config::get_config();
+		CF_MEBIUS conf{};
+		mebius::config::Config mb_config(conf_mebius_path);
+		mb_config.get_value_from_key("Options.Enable", conf.Options.Enable);
+		mb_config.get_value_from_key("Options.BypassCheckSum", conf.Options.BypassCheckSum);
+		mb_config.get_value_from_key("Console.Enable", conf.Console.Enable);
+		mb_config.get_value_from_key("Console.Default", conf.Console.Default);
+		mb_config.get_value_from_key("Console.Error", conf.Console.Error);
+
+		// Mebiusが無効なら読み込み終了
 		if (!conf.Options.Enable) return TRUE;
-		if (conf.Debug.Console.Enable) {
-			mebius::debug::Console::get_instance(conf.Debug.Console.Default, conf.Debug.Console.Error);
+
+		// コンソールが有効なら表示
+		if (conf.Console.Enable) {
+			mebius::debug::Console::get_instance(conf.Console.Default, conf.Console.Error);
 		}
 
 		// Mebius起動ログを表示

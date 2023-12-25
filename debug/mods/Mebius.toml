@@ -1,19 +1,29 @@
 # 大文字小文字は別の文字として処理されます！
 # Aaaaaaa や Aaaaa.Bbbbb と記述してください
+[Test]
+# std::str
+s = 10
+# int64_t
+i = 10
+# double
+d = 3.14
+# bool
+b = true
+
 
 [Options]
 # Mebius自体の有効/無効
 Enable = true
-# MUGENのバージョンチェックの有効/無効
-# 無効にした場合クラッシュする場合があります
+# MUGENのバージョンチェック回避の有効/無効
+# 有効にした場合クラッシュする場合があります
 # 対応バージョン
 # - WinMugen-Hi
 # - WinMugenPlus
 BypassCheckSum = true
 
-[Debug]
+[Console]
 # コンソールの有効/無効
-Console.Enable = true
+Enable = true
 # Mebiusが出力するコンソールログの有効/無効
-Console.Default = true
-Console.Error = true
+Default = true
+Error = true

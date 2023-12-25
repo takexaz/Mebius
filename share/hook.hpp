@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Error.hpp>
+#include <error.hpp>
 
 #include <bit>
 #include <optional>

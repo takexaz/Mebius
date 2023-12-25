@@ -1,30 +1,19 @@
 #include <_config.hpp>
 
 namespace mebius::config {
-	bool get_bool_from_key(toml::table tbl, const char* key) {
-		auto node = tbl.at_path(key);
-		if (node.is_boolean()) {
-			return node.ref<bool>();
-		}
-		return false;
+	Config::Config(const char* path) : _pImpl(new ConfigImpl(path)) {}
+	Config::~Config() { delete _pImpl; }
+
+	bool Config::get_value_from_key(const char* key, std::string& ptr) noexcept {
+		return Config::_pImpl->get_value_from_key_impl<std::string>(key, ptr);
 	}
-
-	CF_MEBIUS get_config(void) {
-		CF_MEBIUS conf;
-		try {
-			toml::table tbl = toml::parse_file(mebius::config::conf_mebius_path);
-			conf.Options.Enable = get_bool_from_key(tbl, "Options.Enable");
-			conf.Options.BypassCheckSum = get_bool_from_key(tbl, "Options.BypassCheckSum");
-
-			// コンソール出力
-			conf.Debug.Console.Enable = get_bool_from_key(tbl, "Debug.Console.Enable");
-			conf.Debug.Console.Default = get_bool_from_key(tbl, "Debug.Console.Default");
-			conf.Debug.Console.Error = get_bool_from_key(tbl, "Debug.Console.Error");
-		}
-		catch (const toml::parse_error& err)
-		{
-			return conf;
-		}
-		return conf;
+	bool Config::get_value_from_key(const char* key, int64_t& ptr) noexcept {
+		return Config::_pImpl->get_value_from_key_impl<int64_t>(key, ptr);
+	}
+	bool Config::get_value_from_key(const char* key, double& ptr) noexcept {
+		return Config::_pImpl->get_value_from_key_impl<double>(key, ptr);
+	}
+	bool Config::get_value_from_key(const char* key, bool& ptr) noexcept {
+		return Config::_pImpl->get_value_from_key_impl<bool>(key, ptr);
 	}
 }

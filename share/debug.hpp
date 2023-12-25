@@ -38,7 +38,7 @@ namespace mebius::debug {
                 std::ofstream ofs("mebius.log");
                 ofs << "\n\n";
                 ofs << "--------------------------------\n";
-                ofs << "MEBIUS ver 2023.12.24 status log\n";
+                ofs << "MEBIUS ver 2023.12.25 status log\n";
                 ofs << "--------------------------------\n";
                 ofs.flush();
                 ofs.close();

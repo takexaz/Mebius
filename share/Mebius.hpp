@@ -4,3 +4,4 @@
 #include <error.hpp>
 #include <hook.hpp>
 #include <inline_hook.hpp>
+#include <config.hpp>
