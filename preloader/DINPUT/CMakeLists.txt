@@ -12,9 +12,7 @@ add_library (
 	${include}
 )
 
-find_package(Mebius REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Mebius)
-link_directories(${CMAKE_SOURCE_DIR}/mods)
 
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
