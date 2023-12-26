@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <memory>
-#include <toml++/toml.hpp>
 
 namespace mebius::config {
 	class Config

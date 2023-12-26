@@ -1,12 +1,12 @@
 cmake_minimum_required (VERSION 3.15)
 
-project (Mebius VERSION 0.1.0 LANGUAGES CXX)
-enable_language(ASM_MASM)
+project (Mebius VERSION 0.1.0 LANGUAGES C CXX ASM_MASM)
 
 file (GLOB src src/*.cpp src/*.c)
 file (GLOB asm src/asm/*.asm)
 file (GLOB include include/*.hpp include/*.h)
-include_directories(deps/tomlplusplus/include)
+
+add_subdirectory(preloader/DINPUT)
 
 add_library (
 	${PROJECT_NAME} SHARED
@@ -15,12 +15,23 @@ add_library (
 	${asm}
 )
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} PRIVATE Zydis)
 
 option(ZYDIS_BUILD_TOOLS "" OFF)
 option(ZYDIS_BUILD_EXAMPLES "" OFF)
 add_subdirectory("deps/zydis" EXCLUDE_FROM_ALL)
-add_subdirectory(preloader/DINPUT)
+target_link_libraries(${PROJECT_NAME} PRIVATE Zydis)
+
+include_directories(deps/tomlplusplus/include/toml++)
+
+set(LUA_PATH "deps/lua")
+file( GLOB_RECURSE LUA_SRC ${LUA_PATH}/*.c )
+list( REMOVE_ITEM LUA_SRC
+  ${LUA_PATH}/lua.c
+  ${LUA_PATH}/luac.c
+)
+include_directories(${LUA_PATH})
+add_library( lua_lib STATIC ${LUA_SRC} )
+target_link_libraries(${PROJECT_NAME} PRIVATE lua_lib)
 
 set(DEBUG_DIR "${CMAKE_SOURCE_DIR}/debug")
 add_custom_command(

@@ -2,7 +2,7 @@
 
 #include <debug.hpp>
 #include <config.hpp>
-#include <toml++/toml.hpp>
+#include <toml.hpp>
 
 namespace mebius::config {
 	class Config::ConfigImpl {

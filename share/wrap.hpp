@@ -27,7 +27,7 @@ namespace mebius::wrap {
                 FreeLibrary(this->_handle);
             }
         }
-        HMODULE get_handle() {
+        HMODULE get_handle() const {
             return this->_handle;
         }
     };

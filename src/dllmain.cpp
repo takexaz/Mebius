@@ -21,8 +21,15 @@ namespace patch {
 		}
 	}
 
+	void benchmark(mebius::inline_hook::PMBCONTEXT context) {
+		// scriptをロード
+		mebius::script::Script test("LuaJIT_Test.lua");
+		test.execute();
+	}
+
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
+		mebius::inline_hook::HookInline(0x0047aa60, patch::benchmark);
 
 		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
 		meblog << "PATCHED!!" << std::endl;
@@ -79,6 +86,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 			mebwarn << "WARNING: Bypass CheckSum!" << std::endl;
 			patch_addr = mebius::util::default_entry_point;
 		}
+
 
 		// プラグインロード用インラインフック(VEH)
 		mebius::inline_hook::HookInline(patch_addr, patch::init_plugin, true);
