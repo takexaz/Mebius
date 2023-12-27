@@ -7,3 +7,6 @@
 [submodule "deps/lua"]
 	path = deps/lua
 	url = https://github.com/lua/lua
+[submodule "deps/luaaa"]
+	path = deps/luaaa
+	url = https://github.com/gengyong/luaaa.git
