@@ -2,11 +2,7 @@
 
 #include <script.hpp>
 #include <debug.hpp>
-extern "C" {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
+#include <luaaa.hpp>
 
 namespace mebius::script {
 	extern "C" static int CallStdCallProc(lua_State * L);

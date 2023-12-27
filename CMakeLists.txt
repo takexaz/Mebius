@@ -22,6 +22,7 @@ add_subdirectory("deps/zydis" EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} PRIVATE Zydis)
 
 include_directories(deps/tomlplusplus/include/toml++)
+include_directories(deps/luaaa)
 
 set(LUA_PATH "deps/lua")
 file( GLOB_RECURSE LUA_SRC ${LUA_PATH}/*.c )
@@ -133,6 +134,8 @@ install (
 	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/
 	DESTINATION include
 )
+
+
 
 include(CMakePackageConfigHelpers)
 
