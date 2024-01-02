@@ -5,4 +5,4 @@
 #include <hook.hpp>
 #include <inline_hook.hpp>
 #include <config.hpp>
-#include <script.hpp>
+#include <luaaa.hpp>

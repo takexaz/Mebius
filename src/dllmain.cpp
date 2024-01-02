@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+
+
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
 		static uint32_t frame = 0;
@@ -22,9 +24,7 @@ namespace patch {
 	}
 
 	void benchmark(mebius::inline_hook::PMBCONTEXT context) {
-		// scriptをロード
-		mebius::script::Script test("LuaJIT_Test.lua");
-		test.execute();
+
 	}
 
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
@@ -87,9 +87,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 			patch_addr = mebius::util::default_entry_point;
 		}
 
-
 		// プラグインロード用インラインフック(VEH)
-		mebius::inline_hook::HookInline(patch_addr, patch::init_plugin, true);
+		mebius::inline_hook::HookInline(patch_addr, patch::init_plugin);
 
 		break;
 	}
