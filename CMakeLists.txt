@@ -164,6 +164,8 @@ install (
 	DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/deps/lua/
 	DESTINATION include/lua
 	FILES_MATCHING PATTERN "*.h"
+	PATTERN "manual" EXCLUDE
+	PATTERN "testes" EXCLUDE
 )
 
 ## Luaaa
