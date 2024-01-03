@@ -4,16 +4,16 @@
   "configurations": [
     {
       "type": "dll",
-      "exe": "${workspaceRoot}\\debug\\mugen.exe",
-      "currentDir": "${workspaceRoot}\\debug",
+      "exe": "${workspaceRoot}\\..\\!MUGEN_DEBUG\\mugen.exe",
+      "currentDir": "${workspaceRoot}\\..\\!MUGEN_DEBUG",
       "project": "CMakeLists.txt",
       "projectTarget": "Mebius.dll",
       "name": "Mebius.dll"
     },
     {
       "type": "dll",
-      "exe": "${workspaceRoot}\\debug\\mugen.exe",
-      "currentDir": "${workspaceRoot}\\debug",
+      "exe": "${workspaceRoot}\\..\\!MUGEN_DEBUG\\mugen.exe",
+      "currentDir": "${workspaceRoot}\\..\\!MUGEN_DEBUG",
       "project": "CMakeLists.txt",
       "projectTarget": "DINPUT.dll (preloader\\DINPUT\\DINPUT.dll)",
       "name": "DINPUT.dll (preloader\\DINPUT\\DINPUT.dll)"

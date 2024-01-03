@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.23.2)
 
 project (DINPUT VERSION 0.1.0 LANGUAGES CXX)
 
@@ -16,7 +16,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Mebius)
 
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-set(DEBUG_DIR "${CMAKE_SOURCE_DIR}/debug")
 add_custom_command(
 	TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DEBUG_DIR}

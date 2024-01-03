@@ -111,7 +111,7 @@ target_compile_options (
 )
 
 # デバッグフォルダにコンパイルの産物をコピー
-set(DEBUG_DIR "${CMAKE_SOURCE_DIR}/debug")
+set(DEBUG_DIR "${CMAKE_SOURCE_DIR}/../!MUGEN_DEBUG")
 add_custom_command(
 	TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DEBUG_DIR}
