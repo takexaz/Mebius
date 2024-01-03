@@ -23,16 +23,11 @@ namespace patch {
 		}
 	}
 
-	void benchmark(mebius::inline_hook::PMBCONTEXT context) {
-
-	}
-
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
-		mebius::inline_hook::HookInline(0x0047aa60, patch::benchmark);
 
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_YELLOW);
-		meblog << "PATCHED!!" << std::endl;
+		const static mebius::loader::Plugins mebi_ex("mods/", "mx");
+		const static mebius::loader::Scripts mebi_sc("scripts/", "ms", true);
 	}
 }
 

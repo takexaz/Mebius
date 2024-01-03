@@ -3,8 +3,14 @@
 #include <iostream>
 #include <memory>
 
+#ifdef MEBIUS_EXPORT
+#define MEBIUSAPI __declspec(dllexport)
+#else
+#define MEBIUSAPI __declspec(dllimport)
+#endif
+
 namespace mebius::config {
-	class Config
+	class MEBIUSAPI Config
 	{
 	public:
 		Config(const char * path);
