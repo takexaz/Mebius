@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 3.23.2)
 
 # プロジェクト名
-project (Mebius VERSION 0.1.0)
+project (Mebius VERSION 0.0.1)
 
 # 使用する言語
 enable_language(CXX)
@@ -188,4 +188,26 @@ target_include_directories (
 	${PROJECT_NAME}
 	PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/tomlplusplus/include/toml++
+)
+
+## cpr
+# コンパイルして静的リンク
+set(BUILD_SHARED_LIBS OFF)
+add_subdirectory("deps/cpr" EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr)
+target_include_directories (
+	${PROJECT_NAME}
+	PRIVATE
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/cpr/include/cpr>
+)
+
+## json
+# コンパイルして静的リンク
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory("deps/json" EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+target_include_directories (
+	${PROJECT_NAME}
+	PRIVATE
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/json/include/nlohmann>
 )
