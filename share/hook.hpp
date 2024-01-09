@@ -108,10 +108,10 @@ namespace mebius::hook {
 				}
 
 				__asm {
-					mov eax, returnAddress
-					leave
-					mov dword ptr[esp], eax
 					mov eax, result
+					mov ecx, returnAddress
+					leave
+					mov dword ptr[esp], ecx
 					ret 4
 				};
 			}
@@ -171,7 +171,7 @@ namespace mebius::hook {
 				}
 
 				auto trampoline = std::bit_cast<ptfa_t<T, Args...>>(hook.GetTrampolineCode());
-				T result = trampoline(args...);
+				result = trampoline(args...);
 
 				for (auto&& f : hook.GetTailHooks()) {
 					auto tail = std::bit_cast<ptfta_t<T, Args...>>(f);
@@ -183,10 +183,10 @@ namespace mebius::hook {
 			}
 
 			__asm {
-				mov eax, returnAddress
-				leave
-				mov dword ptr[esp], eax
+				mov ecx, returnAddress
 				mov eax, result
+				leave
+				mov dword ptr[esp], ecx
 				ret 4
 			};
 		}

@@ -26,8 +26,7 @@ namespace patch {
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
 
-		const static mebius::loader::Plugins mebi_ex("mods/", "mx");
-		const static mebius::loader::Scripts mebi_sc("scripts/", "ms", true);
+		const static mebius::loader::Plugins mebi_ex("mods/", "mx", true);
 	}
 }
 

@@ -26,11 +26,11 @@ namespace mebius::loader {
             for (auto& path : plugin_paths) {
                 HMODULE h = LoadLibraryA(path.c_str());
                 if (h) {
-                    plog << std::format("Loaded Plugin: {}", path);
+                    plog << std::format("Loaded Plugin: {}\n", path);
                     _handles.insert(h);
                 }
                 else {
-                    perr << std::format("Failed to load Plugin: {}", path);
+                    perr << std::format("Failed to load Plugin: {}\n", path);
                 }
             }
         }
@@ -59,11 +59,11 @@ namespace mebius::loader {
                 Script lua(script.c_str());
                 lua_State* L = lua.get_state();
                 if (!L) {
-                    slog << std::format("Loaded Script: {}", script);
+                    slog << std::format("Loaded Script: {}\n", script);
                     _states.insert(L);
                 }
                 else {
-                    serr << std::format("Failed to load Script: {}", script);
+                    serr << std::format("Failed to load Script: {}\n", script);
                 }
             }
         }
