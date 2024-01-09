@@ -12,6 +12,7 @@
 #define MEBIUSAPI __declspec(dllimport)
 #endif
 
+
 namespace mebius::hook {
 	using code_t = uint8_t;
 
@@ -27,6 +28,7 @@ namespace mebius::hook {
 	MEBIUSAPI const HookData* _GetHookDataNullable(uint32_t address) noexcept;
 	MEBIUSAPI void _SetHookOnHead(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept;
 	MEBIUSAPI void _SetHookOnTail(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept;
+	MEBIUSAPI int _get_return_cushion(void) noexcept;
 
 	namespace internal {
 		using pvfv_t = void(*)(void);
@@ -49,6 +51,8 @@ namespace mebius::hook {
 					PUSH DWORD PTR[EBP + 0x04]
 					POP DWORD PTR hookedFunction
 					SUB DWORD PTR hookedFunction, 0x05
+					CALL _get_return_cushion
+					MOV DWORD PTR[EBP + 0x04], EAX
 				}
 				auto& hook = _GetHookData(hookedFunction);
 
@@ -68,53 +72,39 @@ namespace mebius::hook {
 			catch (const MebiusError& e) {
 				ShowErrorDialog(e.what());
 			}
-
-			__asm {
-				mov ecx, returnAddress
-				leave
-				mov dword ptr[esp], ecx
-				ret 4
-			};
 		}
 
 		template <typename T>
-		void hook_tfv(ptfv_t<T> returnAddress) {
-			{
+		T hook_tfv(ptfv_t<T> returnAddress) {
+			T result;
+			try {
 				uint32_t hookedFunction = 0;
-				T result;
-				try {
-					__asm {
-						PUSH DWORD PTR[EBP + 0x04]
-						POP DWORD PTR hookedFunction
-						SUB DWORD PTR hookedFunction, 0x05
-					}
-					auto& hook = _GetHookData(hookedFunction);
-
-					for (auto&& f : hook.GetHeadHooks()) {
-						auto head = std::bit_cast<pvfv_t>(f);
-						head();
-					}
-
-					auto trampoline = std::bit_cast<ptfv_t<T>>(hook.GetTrampolineCode());
-					result = trampoline();
-
-					for (auto&& f : hook.GetTailHooks()) {
-						auto tail = std::bit_cast<ptft_t<T>>(f);
-						result = tail(result);
-					}
-				}
-				catch (const MebiusError& e) {
-					ShowErrorDialog(e.what());
-				}
-
 				__asm {
-					mov eax, result
-					mov ecx, returnAddress
-					leave
-					mov dword ptr[esp], ecx
-					ret 4
-				};
+					PUSH DWORD PTR[EBP + 0x04]
+					POP DWORD PTR hookedFunction
+					SUB DWORD PTR hookedFunction, 0x05
+					CALL _get_return_cushion
+					MOV DWORD PTR[EBP + 0x04], EAX
+				}
+				auto& hook = _GetHookData(hookedFunction);
+
+				for (auto&& f : hook.GetHeadHooks()) {
+					auto head = std::bit_cast<pvfv_t>(f);
+					head();
+				}
+
+				auto trampoline = std::bit_cast<ptfv_t<T>>(hook.GetTrampolineCode());
+				result = trampoline();
+
+				for (auto&& f : hook.GetTailHooks()) {
+					auto tail = std::bit_cast<ptft_t<T>>(f);
+					result = tail(result);
+				}
 			}
+			catch (const MebiusError& e) {
+				ShowErrorDialog(e.what());
+			}
+			return result;
 		}
 
 		template <typename... Args>
@@ -125,6 +115,8 @@ namespace mebius::hook {
 					PUSH DWORD PTR[EBP + 0x04]
 					POP DWORD PTR hookedFunction
 					SUB DWORD PTR hookedFunction, 0x05
+					CALL _get_return_cushion
+					MOV DWORD PTR[EBP + 0x04], EAX
 				}
 				auto& hook = _GetHookData(hookedFunction);
 
@@ -144,17 +136,10 @@ namespace mebius::hook {
 			catch (const MebiusError& e) {
 				ShowErrorDialog(e.what());
 			}
-
-			__asm {
-				mov ecx, returnAddress
-				leave
-				mov dword ptr[esp], ecx
-				ret 4
-			};
 		}
 
 		template <typename T, typename... Args>
-		void hook_tfa(ptfa_t<T, Args...> returnAddress, Args... args) {
+		T hook_tfa(ptfa_t<T, Args...> returnAddress, Args... args) {
 			T result;
 			try {
 				uint32_t hookedFunction = 0;
@@ -162,6 +147,8 @@ namespace mebius::hook {
 					PUSH DWORD PTR[EBP + 0x04]
 					POP DWORD PTR hookedFunction
 					SUB DWORD PTR hookedFunction, 0x05
+					CALL _get_return_cushion
+					MOV DWORD PTR[EBP + 0x04], EAX
 				}
 				auto& hook = _GetHookData(hookedFunction);
 
@@ -181,14 +168,7 @@ namespace mebius::hook {
 			catch (const MebiusError& e) {
 				ShowErrorDialog(e.what());
 			}
-
-			__asm {
-				mov ecx, returnAddress
-				mov eax, result
-				leave
-				mov dword ptr[esp], ecx
-				ret 4
-			};
+			return result;
 		}
 	}
 

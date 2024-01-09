@@ -27,6 +27,8 @@ _hook_inline_cushion proc
     add esp, 04h
     popfd
     popad
+_hook_return_cushion proc
     ret
+_hook_return_cushion endp
 _hook_inline_cushion endp
 end

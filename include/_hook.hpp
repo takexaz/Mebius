@@ -4,6 +4,8 @@
 
 #include <unordered_map>
 
+extern "C" void hook_return_cushion();
+
 namespace mebius::hook {
 	using code_t = uint8_t;
 

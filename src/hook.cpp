@@ -67,6 +67,11 @@ MEBIUSAPI void mebius::hook::_SetHookOnTail(uint32_t hookTarget, const void* hoo
 	}
 }
 
+MEBIUSAPI int mebius::hook::_get_return_cushion(void) noexcept
+{
+	return (int)hook_return_cushion;
+}
+
 HookDataImpl::HookDataImpl(uint32_t address) noexcept {
 	_trampoline_code = make_trampoline_code(address);
 }
