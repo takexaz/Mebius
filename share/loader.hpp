@@ -1,6 +1,6 @@
 #pragma once
-#include <luaaa.hpp>
 #include <debug.hpp>
+#include <unordered_set>
 
 #ifdef MEBIUS_EXPORT
 #define MEBIUSAPI __declspec(dllexport)
@@ -39,57 +39,5 @@ namespace mebius::loader {
                 FreeLibrary(handle);
             }
         }
-    };
-}
-
-namespace mebius::loader {
-    class MEBIUSAPI Scripts
-    {
-    private:
-        std::unordered_set<lua_State*> _states;
-
-    public:
-        Scripts(const std::string dir_path, const std::string extension, bool is_recursive = false) {
-            mebius::debug::Logger slog(std::cout, FOREGROUND_LIME);
-            mebius::debug::Logger serr(std::cerr, FOREGROUND_PINK);
-
-            std::vector<std::string> scripts = listup_file_paths_in_dir(dir_path, extension, is_recursive);
-
-            for (auto& script : scripts) {
-                Script lua(script.c_str());
-                lua_State* L = lua.get_state();
-                if (!L) {
-                    slog << std::format("Loaded Script: {}\n", script);
-                    _states.insert(L);
-                }
-                else {
-                    serr << std::format("Failed to load Script: {}\n", script);
-                }
-            }
-        }
-        ~Scripts() {};
-
-        std::unordered_set<lua_State*> get_states() {
-            return _states;
-        }
-
-        class Script
-        {
-        private:
-            lua_State* _state;
-        public:
-            Script(const char* path) {
-                luaL_openlibs(this->_state);
-                if (luaL_loadfile(this->_state, path)) {
-                    _state = nullptr;
-                }
-            }
-            ~Script() {
-                lua_close(this->_state);
-            }
-            lua_State* get_state() {
-                return this->_state;
-            }
-        };
     };
 }

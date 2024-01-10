@@ -140,48 +140,6 @@ option(ZYDIS_BUILD_EXAMPLES "" OFF)
 add_subdirectory("deps/zydis" EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} PRIVATE Zydis)
 
-## Lua
-# コンパイルして静的リンク
-set(lua_path "deps/lua")
-file(GLOB lua_src ${lua_path}/*.c)
-list(REMOVE_ITEM lua_src
-    ${lua_path}/lua.c
-    ${lua_path}/luac.c
-)
-add_library(lua_lib STATIC ${lua_src})
-target_link_libraries(${PROJECT_NAME} PRIVATE lua_lib)
-
-# パブリックなインクルードディレクトリにluaを追加
-target_include_directories (
-	${PROJECT_NAME}
-	PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/lua>
-	$<INSTALL_INTERFACE:include/lua>
-)
-
-# インストール
-install (
-	DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/deps/lua/
-	DESTINATION include/lua
-	FILES_MATCHING PATTERN "*.h"
-	PATTERN "manual" EXCLUDE
-	PATTERN "testes" EXCLUDE
-)
-
-## Luaaa
-# パブリックなインクルードディレクトリにluaaaを追加
-target_include_directories (
-	${PROJECT_NAME}
-	PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/luaaa>
-	$<INSTALL_INTERFACE:include/luaaa>
-)
-# インストール
-install (
-	FILES ${CMAKE_CURRENT_SOURCE_DIR}/deps/luaaa/luaaa.hpp
-	DESTINATION include/luaaa
-)
-
 ## toml++
 # プライベートなインクルードディレクトリにtoml++を追加
 target_include_directories (
