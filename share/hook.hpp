@@ -50,8 +50,10 @@ namespace mebius::hook {
 					PUSH DWORD PTR[EBP + 0x04]
 					POP DWORD PTR hookedFunction
 					SUB DWORD PTR hookedFunction, 0x05
+					PUSH EAX
 					CALL _get_return_cushion
-					MOV DWORD PTR[EBP + 0x04], EAX
+					XCHG DWORD PTR[EBP + 0x04], EAX
+					POP EAX
 				}
 				auto& hook = _GetHookData(hookedFunction);
 
@@ -82,8 +84,10 @@ namespace mebius::hook {
 					PUSH DWORD PTR[EBP + 0x04]
 					POP DWORD PTR hookedFunction
 					SUB DWORD PTR hookedFunction, 0x05
+					PUSH EAX
 					CALL _get_return_cushion
-					MOV DWORD PTR[EBP + 0x04], EAX
+					XCHG DWORD PTR[EBP + 0x04], EAX
+					POP EAX
 				}
 				auto& hook = _GetHookData(hookedFunction);
 
@@ -114,8 +118,10 @@ namespace mebius::hook {
 					PUSH DWORD PTR[EBP + 0x04]
 					POP DWORD PTR hookedFunction
 					SUB DWORD PTR hookedFunction, 0x05
+					PUSH EAX
 					CALL _get_return_cushion
-					MOV DWORD PTR[EBP + 0x04], EAX
+					XCHG DWORD PTR[EBP + 0x04], EAX
+					POP EAX
 				}
 				auto& hook = _GetHookData(hookedFunction);
 
@@ -146,8 +152,10 @@ namespace mebius::hook {
 					PUSH DWORD PTR[EBP + 0x04]
 					POP DWORD PTR hookedFunction
 					SUB DWORD PTR hookedFunction, 0x05
+					PUSH EAX
 					CALL _get_return_cushion
-					MOV DWORD PTR[EBP + 0x04], EAX
+					XCHG DWORD PTR[EBP + 0x04], EAX
+					POP EAX
 				}
 				auto& hook = _GetHookData(hookedFunction);
 
