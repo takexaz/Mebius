@@ -75,19 +75,19 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		case 0: {
 			static plog::ColorConsoleAppender<plog::MessageOnlyFormatter> consoleAppender;
 			static plog::RollingFileAppender<plog::MessageOnlyFormatter> fileAppender("mebius.log");
-			plog::init(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
+			plog::init<0>(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
 			break;
 		}
 		case 1: {
 			static plog::ColorConsoleAppender<plog::FuncMessageFormatter> consoleAppender;
 			static plog::RollingFileAppender<plog::FuncMessageFormatter> fileAppender("mebius.log");
-			plog::init(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
+			plog::init<0>(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
 			break;
 		}
 		default: {
 			static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
 			static plog::RollingFileAppender<plog::TxtFormatter> fileAppender("mebius.log");
-			plog::init(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
+			plog::init<0>(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
 			break;
 		}
 		}

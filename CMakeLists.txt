@@ -70,6 +70,7 @@ target_compile_definitions (
 	${PROJECT_NAME}
 	PRIVATE
 	MEBIUS_EXPORT
+	PLOG_EXPORT 
 	UNICODE
 	_UNICODE
 	$<$<CONFIG:Debug>: 
@@ -150,6 +151,8 @@ target_include_directories (
 
 ## plog
 # パブリックなインクルードディレクトリにplogを追加
+add_subdirectory("deps/plog", EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE plog)
 target_include_directories (
 	${PROJECT_NAME}
 	PUBLIC
