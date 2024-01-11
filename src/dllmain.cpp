@@ -7,7 +7,10 @@
 
 #include <iostream>
 
+static auto V_SetBuf = reinterpret_cast<BOOL (*)(int, int)>(0x486bb0);
+void V_SetBuf_hook(int, int) {
 
+}
 
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
@@ -25,6 +28,7 @@ namespace patch {
 
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
+		mebius::hook::HookOnHead(V_SetBuf, V_SetBuf_hook);
 
 		const static mebius::loader::Plugins mebi_ex("mods/", "mx", true);
 	}

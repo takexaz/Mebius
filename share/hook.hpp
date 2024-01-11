@@ -43,19 +43,11 @@ namespace mebius::hook {
 		template <typename T, typename... Args>
 		using ptfta_t = T(*)(T, Args...);
 
-		static void hook_vfv(pvfv_t returnAddress) {
+		static void hook_vfv(uint32_t returnAddress) {
 			try {
-				uint32_t hookedFunction = 0;
-				__asm {
-					PUSH DWORD PTR[EBP + 0x04]
-					POP DWORD PTR hookedFunction
-					SUB DWORD PTR hookedFunction, 0x05
-					PUSH EAX
-					CALL _get_return_cushion
-					XCHG DWORD PTR[EBP + 0x04], EAX
-					POP EAX
-				}
-				auto& hook = _GetHookData(hookedFunction);
+				uint32_t* hookedFunction = &returnAddress - 1;
+				auto& hook = _GetHookData(*hookedFunction - 5);
+				*hookedFunction = _get_return_cushion();
 
 				for (auto&& f : hook.GetHeadHooks()) {
 					auto head = std::bit_cast<pvfv_t>(f);
@@ -76,20 +68,12 @@ namespace mebius::hook {
 		}
 
 		template <typename T>
-		T hook_tfv(ptfv_t<T> returnAddress) {
+		T hook_tfv(uint32_t returnAddress) {
 			T result;
 			try {
-				uint32_t hookedFunction = 0;
-				__asm {
-					PUSH DWORD PTR[EBP + 0x04]
-					POP DWORD PTR hookedFunction
-					SUB DWORD PTR hookedFunction, 0x05
-					PUSH EAX
-					CALL _get_return_cushion
-					XCHG DWORD PTR[EBP + 0x04], EAX
-					POP EAX
-				}
-				auto& hook = _GetHookData(hookedFunction);
+				uint32_t* hookedFunction = &returnAddress - 1;
+				auto& hook = _GetHookData(*hookedFunction - 5);
+				*hookedFunction = _get_return_cushion();
 
 				for (auto&& f : hook.GetHeadHooks()) {
 					auto head = std::bit_cast<pvfv_t>(f);
@@ -111,19 +95,11 @@ namespace mebius::hook {
 		}
 
 		template <typename... Args>
-		void hook_vfa(pvfa_t<Args...> returnAddress, Args... args) {
+		void hook_vfa(uint32_t returnAddress, Args... args) {
 			try {
-				uint32_t hookedFunction = 0;
-				__asm {
-					PUSH DWORD PTR[EBP + 0x04]
-					POP DWORD PTR hookedFunction
-					SUB DWORD PTR hookedFunction, 0x05
-					PUSH EAX
-					CALL _get_return_cushion
-					XCHG DWORD PTR[EBP + 0x04], EAX
-					POP EAX
-				}
-				auto& hook = _GetHookData(hookedFunction);
+				uint32_t* hookedFunction = &returnAddress - 1;
+				auto& hook = _GetHookData(*hookedFunction - 5);
+				*hookedFunction = _get_return_cushion();
 
 				for (auto&& f : hook.GetHeadHooks()) {
 					auto head = std::bit_cast<pvfa_t<Args...>>(f);
@@ -144,20 +120,12 @@ namespace mebius::hook {
 		}
 
 		template <typename T, typename... Args>
-		T hook_tfa(ptfa_t<T, Args...> returnAddress, Args... args) {
+		T hook_tfa(uint32_t returnAddress, Args... args) {
 			T result;
 			try {
-				uint32_t hookedFunction = 0;
-				__asm {
-					PUSH DWORD PTR[EBP + 0x04]
-					POP DWORD PTR hookedFunction
-					SUB DWORD PTR hookedFunction, 0x05
-					PUSH EAX
-					CALL _get_return_cushion
-					XCHG DWORD PTR[EBP + 0x04], EAX
-					POP EAX
-				}
-				auto& hook = _GetHookData(hookedFunction);
+				uint32_t* hookedFunction = &returnAddress - 1;
+				auto& hook = _GetHookData(*hookedFunction - 5);
+				*hookedFunction = _get_return_cushion();
 
 				for (auto&& f : hook.GetHeadHooks()) {
 					auto head = std::bit_cast<pvfa_t<Args...>>(f);
