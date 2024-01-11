@@ -9,16 +9,17 @@
 
 static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
 
+
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
 		static uint32_t frame = 0;
 		++frame;
-		const static char* mb_version = "MEBIUS %i.%02i.%02i";
+		const static char* mb_version = "MEBIUS %i.%02i.%02i a-3";
 		if (frame % 800 < 400) {
 			void** stack = (void**)context->Esp;
-			*(stack + 1) = (void*)2023;
-			*(stack + 2) = (void*)12;
-			*(stack + 3) = (void*)24;
+			*(stack + 1) = (void*)2024;
+			*(stack + 2) = (void*)01;
+			*(stack + 3) = (void*)11;
 			*stack = (void*)mb_version;
 		}
 	}

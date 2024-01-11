@@ -28,7 +28,7 @@ namespace mebius::hook {
 	MEBIUSAPI const HookData* _GetHookDataNullable(uint32_t address) noexcept;
 	MEBIUSAPI void _SetHookOnHead(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept;
 	MEBIUSAPI void _SetHookOnTail(uint32_t hookTarget, const void* hookFunction, const void* internalHookFunction) noexcept;
-	MEBIUSAPI int _get_return_cushion(void) noexcept;
+	MEBIUSAPI uint32_t _get_return_cushion(void) noexcept;
 
 	namespace internal {
 		using pvfv_t = void(*)(void);
@@ -45,7 +45,7 @@ namespace mebius::hook {
 
 		static void hook_vfv(uint32_t returnAddress) {
 			try {
-				uint32_t* hookedFunction = &returnAddress - 1;
+				volatile uint32_t* hookedFunction = &returnAddress - 1;
 				auto& hook = _GetHookData(*hookedFunction - 5);
 				*hookedFunction = _get_return_cushion();
 
@@ -71,7 +71,7 @@ namespace mebius::hook {
 		T hook_tfv(uint32_t returnAddress) {
 			T result;
 			try {
-				uint32_t* hookedFunction = &returnAddress - 1;
+				volatile uint32_t* hookedFunction = &returnAddress - 1;
 				auto& hook = _GetHookData(*hookedFunction - 5);
 				*hookedFunction = _get_return_cushion();
 
@@ -97,7 +97,7 @@ namespace mebius::hook {
 		template <typename... Args>
 		void hook_vfa(uint32_t returnAddress, Args... args) {
 			try {
-				uint32_t* hookedFunction = &returnAddress - 1;
+				volatile uint32_t* hookedFunction = &returnAddress - 1;
 				auto& hook = _GetHookData(*hookedFunction - 5);
 				*hookedFunction = _get_return_cushion();
 
@@ -123,7 +123,7 @@ namespace mebius::hook {
 		T hook_tfa(uint32_t returnAddress, Args... args) {
 			T result;
 			try {
-				uint32_t* hookedFunction = &returnAddress - 1;
+				volatile uint32_t* hookedFunction = &returnAddress - 1;
 				auto& hook = _GetHookData(*hookedFunction - 5);
 				*hookedFunction = _get_return_cushion();
 
