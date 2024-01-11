@@ -24,7 +24,7 @@ namespace patch {
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
 
-		const static mebius::loader::Plugins mebi_ex("mods/", "mx", true);
+		mebius::loader::Plugins::create("mods/", "mx", true);
 	}
 }
 
@@ -37,8 +37,8 @@ struct CF_MEBIUS {
 
 	struct CF_CONSOLE {
 		bool Enable = false;
-		bool Default = false;
-		bool Error = false;
+		int64_t Level = plog::none;
+		int64_t Detail = 0;
 	};
 	CF_CONSOLE Console;
 };
@@ -56,26 +56,47 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		mb_config.get_value_from_key("Options.Enable", conf.Options.Enable);
 		mb_config.get_value_from_key("Options.BypassCheckSum", conf.Options.BypassCheckSum);
 		mb_config.get_value_from_key("Console.Enable", conf.Console.Enable);
-		mb_config.get_value_from_key("Console.Default", conf.Console.Default);
-		mb_config.get_value_from_key("Console.Error", conf.Console.Error);
+		mb_config.get_value_from_key("Console.Level", conf.Console.Level);
+		mb_config.get_value_from_key("Console.Detail", conf.Console.Detail);
 
 		// Mebiusが無効なら読み込み終了
 		if (!conf.Options.Enable) return TRUE;
 
 		// コンソールが有効なら表示
 		if (conf.Console.Enable) {
-			mebius::debug::Console::get_instance(conf.Console.Default, conf.Console.Error);
+			mebius::debug::Console::get_instance();
+		}
+
+
+		switch (conf.Console.Detail)
+		{
+		case 0: {
+			static plog::ColorConsoleAppender<plog::MessageOnlyFormatter> consoleAppender;
+			static plog::RollingFileAppender<plog::MessageOnlyFormatter> fileAppender("mebius.log");
+			plog::init(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
+			break;
+		}
+		case 1: {
+			static plog::ColorConsoleAppender<plog::FuncMessageFormatter> consoleAppender;
+			static plog::RollingFileAppender<plog::FuncMessageFormatter> fileAppender("mebius.log");
+			plog::init(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
+			break;
+		}
+		default: {
+			static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+			static plog::RollingFileAppender<plog::TxtFormatter> fileAppender("mebius.log");
+			plog::init(plog::Severity(conf.Console.Level), &consoleAppender).addAppender(&fileAppender);
+			break;
+		}
 		}
 
 		// Mebius起動ログを表示
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_CYAN);
-		meblog << "Initializing Mebius." << std::endl;
+		PLOGD << "Initializing Mebius.";
 
 		// MUGENのバージョンをチェック
-		mebius::debug::Logger mebwarn(std::cout, FOREGROUND_YELLOW);
 		uint32_t patch_addr = mebius::util::detect_mugen();
 		if (patch_addr == 0xFFFFFFFF && conf.Options.BypassCheckSum) {
-			mebwarn << "WARNING: Bypass CheckSum!" << std::endl;
+			PLOGW << "Bypass CheckSum!";
 			patch_addr = mebius::util::default_entry_point;
 		}
 
@@ -91,8 +112,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		break;
 	}
 	case DLL_PROCESS_DETACH: {
-		mebius::debug::Logger meblog(std::cout, FOREGROUND_CYAN);
-		meblog << "Denitializing Mebius." << std::endl;
+		PLOGD << "Denitializing Mebius." << std::endl;
 		break;
 	}
 	}

@@ -11,19 +11,18 @@ namespace mebius::config {
 
 		template <typename T>
 		bool get_value_from_key_impl(const char* key, T& ptr) noexcept {
-			mebius::debug::Logger cferr(std::cerr, FOREGROUND_PINK);
 			try {
 				auto node = _tbl.at_path(key);
 				if (node.is<T>()) {
 					ptr = node.ref<T>();
 					return true;
 				}
-				cferr << std::format("[{}] type mismatch.", key) << std::endl;
+				PLOGE << "[" << key << "] type mismatch.";
 				return false;
 			}
 			catch (const toml::parse_error& err)
 			{
-				cferr << err.what() << std::endl;
+				PLOGE << err.what();
 				return false;
 			}
 		}

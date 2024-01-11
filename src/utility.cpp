@@ -2,6 +2,7 @@
 #include <_debug.hpp>
 
 #include <algorithm>
+#include <format>
 
 #define BUFSIZE 1024
 #define MD5LEN  16
@@ -10,9 +11,6 @@
 
 
 uint32_t mebius::util::detect_mugen(void) {
-    mebius::debug::Logger meblog(std::cout, FOREGROUND_LIME);
-    mebius::debug::Logger meberr(std::cerr, FOREGROUND_PINK);
-
     // ハッシュを計算
     std::string md5 = calc_md5_self();
 
@@ -24,13 +22,13 @@ uint32_t mebius::util::detect_mugen(void) {
     // 実行ファイルのハッシュから本体を識別
     try {
         auto result = MUGEN_HASH_LIST.at(md5);
-        meblog << std::format("Registered WINMUGEN: {}", result.first) << std::endl;
-        meblog << std::format("MD5Hash: {}", md5) << std::endl;
+        PLOGD << "Registered WINMUGEN: " << result.first;
+        PLOGD << "MD5Hash: " << md5;
         return result.second;
     }
     catch (const std::out_of_range& e) {
-        meberr << "Unregistered WINMUGEN." << std::endl;
-        meberr << std::format("MD5Hash: {}", md5) << std::endl;
+        PLOGE << "Unregistered WINMUGEN.";
+        PLOGE << "MD5Hash: " << md5;
         return 0xFFFFFFFF;
     }
 
@@ -38,7 +36,6 @@ uint32_t mebius::util::detect_mugen(void) {
 
 std::string mebius::util::calc_md5_self()
 {
-    mebius::debug::Logger utilerr(std::cerr, FOREGROUND_PINK);
     std::string md5{};
 
     DWORD dwStatus = 0;
@@ -58,7 +55,7 @@ std::string mebius::util::calc_md5_self()
     DWORD result = GetModuleFileName(NULL, filename, MAX_PATH);
     if (result == 0) {
         dwStatus = GetLastError();
-        utilerr << std::format("GetModuleFileName failed: {}", dwStatus) << std::endl;
+        PLOGE << "GetModuleFileName failed :" << dwStatus;
         return "";
     }
 
@@ -73,7 +70,7 @@ std::string mebius::util::calc_md5_self()
     if (INVALID_HANDLE_VALUE == hFile)
     {
         dwStatus = GetLastError();
-        utilerr << std::format("CreateFile failed: {}", dwStatus) << std::endl;
+        PLOGE << "CreateFile failed :" << dwStatus;
         return "";
     }
 
@@ -85,7 +82,7 @@ std::string mebius::util::calc_md5_self()
         CRYPT_VERIFYCONTEXT))
     {
         dwStatus = GetLastError();
-        utilerr << std::format("CryptAcquireContext failed: {}", dwStatus) << std::endl;
+        PLOGE << "CryptAcquireContext failed :" << dwStatus;
         CloseHandle(hFile);
         return "";
     }
@@ -93,7 +90,7 @@ std::string mebius::util::calc_md5_self()
     if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash))
     {
         dwStatus = GetLastError();
-        utilerr << std::format("CryptCreateHash failed: {}", dwStatus) << std::endl;
+        PLOGE << "CryptCreateHash failed :" << dwStatus;
         CloseHandle(hFile);
         return "";
     }
@@ -109,7 +106,7 @@ std::string mebius::util::calc_md5_self()
         if (!CryptHashData(hHash, rgbFile, cbRead, 0))
         {
             dwStatus = GetLastError();
-            utilerr << std::format("CryptHashData failed: {}", dwStatus) << std::endl;
+            PLOGE << "CryptHashData failed :" << dwStatus;
             CryptReleaseContext(hProv, 0);
             CryptDestroyHash(hHash);
             CloseHandle(hFile);
@@ -120,7 +117,7 @@ std::string mebius::util::calc_md5_self()
     if (!bResult)
     {
         dwStatus = GetLastError();
-        utilerr << std::format("ReadFile failed: {}", dwStatus) << std::endl;
+        PLOGE << "ReadFile failed :" << dwStatus;
         CryptReleaseContext(hProv, 0);
         CryptDestroyHash(hHash);
         CloseHandle(hFile);
@@ -138,7 +135,7 @@ std::string mebius::util::calc_md5_self()
     else
     {
         dwStatus = GetLastError();
-        printf("CryptGetHashParam failed: %d\n", dwStatus);
+        PLOGE << "CryptGetHashParam failed :" << dwStatus;
         return "";
     }
 

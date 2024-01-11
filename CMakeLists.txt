@@ -148,24 +148,16 @@ target_include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/tomlplusplus/include/toml++
 )
 
-## cpr
-# コンパイルして静的リンク
-set(BUILD_SHARED_LIBS OFF)
-add_subdirectory("deps/cpr" EXCLUDE_FROM_ALL)
-target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr)
+## plog
+# パブリックなインクルードディレクトリにplogを追加
 target_include_directories (
 	${PROJECT_NAME}
-	PRIVATE
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/cpr/include/cpr>
+	PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/plog/include/>
+	$<INSTALL_INTERFACE:include>
 )
-
-## json
-# コンパイルして静的リンク
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory("deps/json" EXCLUDE_FROM_ALL)
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
-target_include_directories (
-	${PROJECT_NAME}
-	PRIVATE
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/json/include/nlohmann>
+# インストール
+install (
+	DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/deps/plog/include/plog
+	DESTINATION include
 )

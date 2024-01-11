@@ -1,4 +1,5 @@
 #include <loader.hpp>
+#include <filesystem>
 
 namespace mebius::loader {
 	std::vector<std::string> listup_file_paths_in_dir(const std::string dir_path, const std::string extension, bool is_recursive) {
@@ -17,5 +18,5 @@ namespace mebius::loader {
         }
 		return paths;
 	}
-
+    std::vector<Plugins*> Plugins::_plugins;
 }
