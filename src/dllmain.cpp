@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
+
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
 		static uint32_t frame = 0;
@@ -22,7 +24,7 @@ namespace patch {
 	}
 
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
-		mebius::inline_hook::HookInline(0x00430163, patch::change_version);
+		mebius::inline_hook::HookInline(ModeSelect, 0x10A3, patch::change_version);
 
 		mebius::loader::Plugins::create("mods/", "mx", true);
 	}
@@ -101,7 +103,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		}
 
 		// プラグインロード用インラインフック(VEH)
-		mebius::inline_hook::HookInline(patch_addr, patch::init_plugin);
+		mebius::inline_hook::HookInline((void*)patch_addr, 0, patch::init_plugin);
 
 		break;
 	}

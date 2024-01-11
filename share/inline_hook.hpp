@@ -58,10 +58,10 @@ namespace mebius::inline_hook {
 	namespace internal {
 		using pvfc_t = void(*)(PMBCONTEXT);
 	}
-	static void HookInline(uint32_t address, const internal::pvfc_t callee) noexcept {
-		_SetInlineHook(address, std::bit_cast<const void*>(callee), false);
+	static void HookInline(void* address, uint32_t offset, const internal::pvfc_t callee) noexcept {
+		_SetInlineHook((uint32_t)address + offset, std::bit_cast<const void*>(callee), false);
 	}
-	static void HookInline(uint32_t address, const internal::pvfc_t callee, bool isVEH) noexcept {
-		_SetInlineHook(address, std::bit_cast<const void*>(callee), isVEH);
+	static void HookInline(uint32_t address, uint32_t offset, const internal::pvfc_t callee, bool isVEH) noexcept {
+		_SetInlineHook((uint32_t)address + offset, std::bit_cast<const void*>(callee), isVEH);
 	}
 }
