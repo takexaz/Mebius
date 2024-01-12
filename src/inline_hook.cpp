@@ -103,19 +103,22 @@ extern "C" inline const void hook_inline(const PMBCONTEXT context) {
 		return;
 	}
 
-	uint32_t _esp = context->Esp;
+	// uint32_t _esp = context->Esp;
 	uint32_t _eip = context->Eip;
 
 	for (auto&& f : hook->GetInlineHooks()) {
 		auto inline_function = std::bit_cast<internal::pvfc_t>(f);
 		inline_function(context);
 
-		context->Esp = _esp;
-		context->Eip = _eip;
+		// context->Esp = _esp;
+		// context->Eip = _eip;
 	}
 
-	auto trampoline = std::bit_cast<DWORD>(hook->GetTrampolineCode());
-	context->Eip = trampoline;
+	// trampoline if not edit eip
+	if (_eip == context->Eip) {
+		auto trampoline = std::bit_cast<DWORD>(hook->GetTrampolineCode());
+		context->Eip = trampoline;
+	}
 	return;
 }
 
@@ -128,8 +131,8 @@ static LONG __stdcall hook_inline_veh(_EXCEPTION_POINTERS* ExceptionInfo) noexce
 			return EXCEPTION_CONTINUE_SEARCH;
 		}
 
-		uint32_t _esp = ExceptionInfo->ContextRecord->Esp;
-		uint32_t _eip = ExceptionInfo->ContextRecord->Eip;
+		// uint32_t _esp = ExceptionInfo->ContextRecord->Esp;
+
 
 		MBCONTEXT context = {
 		ExceptionInfo->ContextRecord->EFlags,
@@ -148,23 +151,33 @@ static LONG __stdcall hook_inline_veh(_EXCEPTION_POINTERS* ExceptionInfo) noexce
 			auto inline_function = std::bit_cast<internal::pvfc_t>(f);
 			inline_function(&context);
 
-			context.Eip = _eip;
-			context.Esp = _esp;
+			// context.Eip = _eip;
+			// context.Esp = _esp;
 		}
+
+		uint32_t _eip = ExceptionInfo->ContextRecord->Eip;
+
 		// Restore
 		{
 			ExceptionInfo->ContextRecord->EFlags = context.EFlags;
 			ExceptionInfo->ContextRecord->Edi = context.Edi;
 			ExceptionInfo->ContextRecord->Esi = context.Esi;
 			ExceptionInfo->ContextRecord->Ebp = context.Ebp;
+			ExceptionInfo->ContextRecord->Esp = context.Esp;
 			ExceptionInfo->ContextRecord->Ebx = context.Ebx;
 			ExceptionInfo->ContextRecord->Edx = context.Edx;
 			ExceptionInfo->ContextRecord->Ecx = context.Ecx;
 			ExceptionInfo->ContextRecord->Eax = context.Eax;
+			ExceptionInfo->ContextRecord->Eip = context.Eip;
 		}
 
-		auto trampoline = std::bit_cast<DWORD>(hook->GetTrampolineCode());
-		ExceptionInfo->ContextRecord->Eip = trampoline;
+		// trampoline if not edit eip
+		if (ExceptionInfo->ContextRecord->Eip == _eip) {
+			auto trampoline = std::bit_cast<DWORD>(hook->GetTrampolineCode());
+			ExceptionInfo->ContextRecord->Eip = trampoline;
+		}
+
+
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 	else {
