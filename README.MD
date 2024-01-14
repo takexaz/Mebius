@@ -1,15 +1,15 @@
 Mebius
 ============================
-(‘½•ª)¢ŠE‰‚Ìwinmugen—pModLoader, FunctionHooker
+(å¤šåˆ†)ä¸–ç•Œåˆã®winmugenç”¨ModLoader, FunctionHooker
 
 ## Requirements
-[Microsoft Visual C++ Ä”Ð•z‰Â”\ƒpƒbƒP[ƒW(x86)](https://aka.ms/vs/17/release/vc_redist.x86.exe)
-[MebiusLoader](https://github.com/takexaz/MebiusLoader/releases/latest)
+* [Microsoft Visual C++ å†é ’å¸ƒå¯èƒ½ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸(x86)](https://aka.ms/vs/17/release/vc_redist.x86.exe)
+* [MebiusLoader](https://github.com/takexaz/MebiusLoader/releases/latest)
 
 ## Installation
-1. winmugen.exe‚ª‚ ‚éƒfƒBƒŒƒNƒgƒŠ‚É[DINPUT.dll](https://github.com/takexaz/MebiusLoader/releases/latest)‚ð”z’u
-2. modsƒfƒBƒŒƒNƒgƒŠ‚ðì¬‚µA[Mebius.toml](https://github.com/takexaz/Mebius/releases/latest)ƒtƒ@ƒCƒ‹‚ð”z’u
-3. [Mebius.dll](https://github.com/takexaz/Mebius/releases/latest)ƒtƒ@ƒCƒ‹‚ð”z’u
+1. winmugen.exeãŒã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«[DINPUT.dll](https://github.com/takexaz/MebiusLoader/releases/latest)ã‚’é…ç½®
+2. modsãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ä½œæˆã—ã€[Mebius.toml](https://github.com/takexaz/Mebius/releases/latest)ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é…ç½®
+3. [Mebius.dll](https://github.com/takexaz/Mebius/releases/latest)ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é…ç½®
 
 ## License
 * [MIT](LICENSE.txt)
