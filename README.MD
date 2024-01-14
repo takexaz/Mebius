@@ -10,7 +10,14 @@ Mebius
 1. winmugen.exeがあるディレクトリに[DINPUT.dll](https://github.com/takexaz/MebiusLoader/releases/latest)を配置
 2. modsディレクトリを作成し、[Mebius.toml](https://github.com/takexaz/Mebius/releases/latest)ファイルを配置
 3. [Mebius.dll](https://github.com/takexaz/Mebius/releases/latest)ファイルを配置
-
+```
+root
+└mods
+　└Mebius.toml
+└winmugen.exe
+└Mebius.dll
+└DINPUT.dll
+```
 ## License
 * [MIT](LICENSE.txt)
 
