@@ -4,18 +4,6 @@
 [submodule "deps/zydis"]
 	path = deps/zydis
 	url = https://github.com/zyantific/zydis.git
-[submodule "deps/lua"]
-	path = deps/lua
-	url = https://github.com/lua/lua
-[submodule "deps/luaaa"]
-	path = deps/luaaa
-	url = https://github.com/gengyong/luaaa.git
-[submodule "deps/json"]
-	path = deps/json
-	url = https://github.com/nlohmann/json.git
-[submodule "deps/cpr"]
-	path = deps/cpr
-	url = https://github.com/libcpr/cpr.git
 [submodule "deps/plog"]
 	path = deps/plog
 	url = https://github.com/SergiusTheBest/plog.git
