@@ -6,26 +6,33 @@
 #include <_utility.hpp>
 
 #include <iostream>
+#include <format>
 
 static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
 
+const static uint16_t VERSION_X = 0;
+const static uint16_t VERSION_Y = 0;
+const static uint16_t VERSION_Z = 1;
 
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
 		static uint32_t frame = 0;
 		++frame;
-		const static char* mb_version = "MEBIUS %i.%02i.%02i a-3";
+		const static char* mb_version = "MEBIUS v%i.%i.%i";
 		if (frame % 800 < 400) {
 			void** stack = (void**)context->Esp;
-			*(stack + 1) = (void*)2024;
-			*(stack + 2) = (void*)01;
-			*(stack + 3) = (void*)11;
+			*(stack + 1) = (void*)VERSION_X;
+			*(stack + 2) = (void*)VERSION_Y;
+			*(stack + 3) = (void*)VERSION_Z;
 			*stack = (void*)mb_version;
 		}
 	}
 
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(ModeSelect, 0x10A3, patch::change_version);
+
+		auto U = mebius::updater::Updater("takexaz/Mebius", "Mebius.dll", std::format("{}.{}.{}", VERSION_X, VERSION_Y, VERSION_Z));
+		U.update();
 
 		mebius::loader::Plugins::create("mods/", "mx", true);
 	}
@@ -95,6 +102,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 
 		// Mebius起動ログを表示
 		PLOGD << "Initializing Mebius.";
+
 
 		// MUGENのバージョンをチェック
 		uint32_t patch_addr = mebius::util::detect_mugen();

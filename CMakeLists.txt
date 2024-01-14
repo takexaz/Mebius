@@ -130,10 +130,6 @@ add_custom_command(
 )
 ENDIF()
 
-## PreLoader
-# コンパイルに追加
-add_subdirectory(preloader/DINPUT)
-
 ## Zydis
 # コンパイルして静的リンク
 option(ZYDIS_BUILD_TOOLS "" OFF)
@@ -163,4 +159,16 @@ target_include_directories (
 install (
 	DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/deps/plog/include/plog
 	DESTINATION include
+)
+
+## その他必須ライブラリ
+target_link_libraries (
+	${PROJECT_NAME}
+	PRIVATE
+	$<$<CONFIG:Debug>:
+		Urlmon.lib
+	>
+	$<$<CONFIG:Release>:
+		Urlmon.lib
+	>
 )
