@@ -10,6 +10,24 @@
 
 static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
 
+struct CF_MEBIUS {
+	struct CF_OPTIONS {
+		bool Enable = false;
+		bool BypassCheckSum = false;
+		bool AutoUpdate = false;
+	};
+	CF_OPTIONS Options;
+
+	struct CF_CONSOLE {
+		bool Enable = false;
+		int64_t Level = plog::none;
+		int64_t Detail = 0;
+	};
+	CF_CONSOLE Console;
+};
+static CF_MEBIUS conf{};
+const static char* conf_mebius_path = "mods\\mebius.toml";
+
 const static uint16_t VERSION_X = 0;
 const static uint16_t VERSION_Y = 0;
 const static uint16_t VERSION_Z = 1;
@@ -31,29 +49,14 @@ namespace patch {
 	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(ModeSelect, 0x10A3, patch::change_version);
 
-		auto U = mebius::updater::Updater("takexaz/Mebius", "Mebius.dll", std::format("{}.{}.{}", VERSION_X, VERSION_Y, VERSION_Z));
-		U.update();
+		if (conf.Options.AutoUpdate == true) {
+			auto U = mebius::updater::Updater("takexaz/Mebius", "Mebius.dll", std::format("{}.{}.{}", VERSION_X, VERSION_Y, VERSION_Z));
+			U.update();
+		}
 
 		mebius::loader::Plugins::create("mods/", "mx", true);
 	}
 }
-
-struct CF_MEBIUS {
-	struct CF_OPTIONS {
-		bool Enable = false;
-		bool BypassCheckSum = false;
-	};
-	CF_OPTIONS Options;
-
-	struct CF_CONSOLE {
-		bool Enable = false;
-		int64_t Level = plog::none;
-		int64_t Detail = 0;
-	};
-	CF_CONSOLE Console;
-};
-
-const static char* conf_mebius_path = "mods\\mebius.toml";
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 {
@@ -61,10 +64,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 	{
 	case DLL_PROCESS_ATTACH: {
 		// ConfigÇì«Ç›çûÇÒÇ≈äeéÌê›íËÇçsÇ§
-		CF_MEBIUS conf{};
 		mebius::config::Config mb_config(conf_mebius_path);
 		mb_config.get_value_from_key("Options.Enable", conf.Options.Enable);
 		mb_config.get_value_from_key("Options.BypassCheckSum", conf.Options.BypassCheckSum);
+		mb_config.get_value_from_key("Options.AutoUpdate", conf.Options.AutoUpdate);
 		mb_config.get_value_from_key("Console.Enable", conf.Console.Enable);
 		mb_config.get_value_from_key("Console.Level", conf.Console.Level);
 		mb_config.get_value_from_key("Console.Detail", conf.Console.Detail);
