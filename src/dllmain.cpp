@@ -123,16 +123,19 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		}
 		}
 
-		// Mebius起動ログを表示
-		PLOGD << "Initializing Mebius.";
-
-
 		// MUGENのバージョンをチェック
 		uint32_t patch_addr = mebius::util::detect_mugen();
 		if (patch_addr == 0xFFFFFFFF && conf.Options.BypassCheckSum) {
 			PLOGW << "Bypass CheckSum!";
 			patch_addr = mebius::util::default_entry_point;
 		}
+		else {
+			PLOGE << "Mebius initialization failed.";
+			return TRUE;
+		}
+
+		// Mebius起動ログを表示
+		PLOGD << "Initializing Mebius.";
 
 		// プラグインロード用インラインフック(VEH)
 		mebius::inline_hook::HookInline((void*)patch_addr, 0, patch::init);
