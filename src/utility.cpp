@@ -7,7 +7,54 @@
 #define BUFSIZE 1024
 #define MD5LEN  16
 
+std::string mebius::util::get_module_directory(HMODULE hModule) {
+    // 返却値
+    CString res = (LPCTSTR)nullptr;
+    // パス、ドライブ名、ディレクトリ名、ファイル名、拡張子
+    TCHAR path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
+    // フルパスを取得
+    if (GetModuleFileName(hModule, path, _MAX_PATH) != 0)
+    {
+        // ファイルパスを分割
+        _tsplitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
+        // ドライブ名とディレクトリ名を結合
+        res = PathCombine(path, drive, dir);
+    }
+    return CStringA(res).GetBuffer();
+}
 
+std::string mebius::util::get_module_filename(HMODULE hModule) {
+    // 返却値
+    CString res = (LPCTSTR)nullptr;
+    // パス、ドライブ名、ディレクトリ名、ファイル名、拡張子
+    TCHAR path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
+    // フルパスを取得
+    if (GetModuleFileName(hModule, path, _MAX_PATH) != 0)
+    {
+        // ファイルパスを分割
+        _tsplitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
+        // ドライブ名とディレクトリ名を結合
+        res = file;
+        res += ext;
+    }
+    return CStringA(res).GetBuffer();
+}
+
+std::string mebius::util::get_module_path(HMODULE hModule) {
+    // 返却値
+    CString res = (LPCTSTR)nullptr;
+    // パス、ドライブ名、ディレクトリ名、ファイル名、拡張子
+    TCHAR path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
+    // フルパスを取得
+    if (GetModuleFileName(hModule, path, _MAX_PATH) != 0)
+    {
+        // ファイルパスを分割
+        _tsplitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
+        // ドライブ名とディレクトリ名を結合
+        res = path;
+    }
+    return CStringA(res).GetBuffer();
+}
 
 
 uint32_t mebius::util::detect_mugen(void) {

@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 3.23.2)
 
 # プロジェクト名
-project (Mebius VERSION 0.0.2)
+project (Mebius VERSION 0.0.3)
 
 # 使用する言語
 enable_language(CXX)
@@ -20,6 +20,12 @@ add_library (
 	${src}
 	${include}
 	${asm}
+)
+
+# バージョン情報をヘッダーファイルに埋め込む
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/_version.hpp.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/_version.hpp"
 )
 
 # エイリアスターゲットを定義

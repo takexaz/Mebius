@@ -4,10 +4,11 @@
 
 #include <_debug.hpp>
 #include <_utility.hpp>
+#include <_version.hpp>
 
 #include <iostream>
 #include <format>
-#include <winnt.h>
+
 
 static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
 static auto __except_handler3 = reinterpret_cast<int (*)(PEXCEPTION_RECORD exception_record, void* registration, PCONTEXT context, void* dispatcher)>(0x496150);
@@ -30,10 +31,6 @@ struct CF_MEBIUS {
 static CF_MEBIUS conf{};
 const static char* conf_mebius_path = "mods\\mebius.toml";
 
-const static uint16_t VERSION_X = 0;
-const static uint16_t VERSION_Y = 0;
-const static uint16_t VERSION_Z = 2;
-
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
 		static uint32_t frame = 0;
@@ -41,9 +38,9 @@ namespace patch {
 		const static char* mb_version = "MEBIUS v%i.%i.%i";
 		if (frame % 800 < 400) {
 			void** stack = (void**)context->Esp;
-			*(stack + 1) = (void*)VERSION_X;
-			*(stack + 2) = (void*)VERSION_Y;
-			*(stack + 3) = (void*)VERSION_Z;
+			*(stack + 1) = (void*)PROJECT_VERSION_MAJOR;
+			*(stack + 2) = (void*)PROJECT_VERSION_MINOR;
+			*(stack + 3) = (void*)PROJECT_VERSION_PATCH;
 			*stack = (void*)mb_version;
 		}
 	}
@@ -71,7 +68,7 @@ namespace patch {
 		mebius::hook::HookOnHead(__except_handler3, exception_logger);
 
 		if (conf.Options.AutoUpdate == true) {
-			auto U = mebius::updater::Updater("takexaz/Mebius", "Mebius.dll", std::format("{}.{}.{}", VERSION_X, VERSION_Y, VERSION_Z));
+			auto U = mebius::updater::Updater("takexaz/Mebius", GetCurrentModule(), std::format("{}.{}.{}", PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH));
 			U.update();
 		}
 

@@ -1,0 +1,6 @@
+#pragma once
+#include <stdint.h>
+
+static const uint32_t PROJECT_VERSION_MAJOR = @PROJECT_VERSION_MAJOR@;
+static const uint32_t PROJECT_VERSION_MINOR = @PROJECT_VERSION_MINOR@;
+static const uint32_t PROJECT_VERSION_PATCH = @PROJECT_VERSION_PATCH@;
