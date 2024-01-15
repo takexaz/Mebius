@@ -129,7 +129,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 			PLOGW << "Bypass CheckSum!";
 			patch_addr = mebius::util::default_entry_point;
 		}
-		else {
+		else if (patch_addr == 0xFFFFFFFF) {
 			PLOGE << "Mebius initialization failed.";
 			return TRUE;
 		}
