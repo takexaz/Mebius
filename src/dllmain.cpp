@@ -7,8 +7,10 @@
 
 #include <iostream>
 #include <format>
+#include <winnt.h>
 
 static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
+static auto __except_handler3 = reinterpret_cast<int (*)(PEXCEPTION_RECORD exception_record, void* registration, PCONTEXT context, void* dispatcher)>(0x496150);
 
 struct CF_MEBIUS {
 	struct CF_OPTIONS {
@@ -30,7 +32,7 @@ const static char* conf_mebius_path = "mods\\mebius.toml";
 
 const static uint16_t VERSION_X = 0;
 const static uint16_t VERSION_Y = 0;
-const static uint16_t VERSION_Z = 1;
+const static uint16_t VERSION_Z = 2;
 
 namespace patch {
 	void change_version(mebius::inline_hook::PMBCONTEXT context) {
@@ -45,9 +47,28 @@ namespace patch {
 			*stack = (void*)mb_version;
 		}
 	}
+	
+	void exception_logger(PEXCEPTION_RECORD exception_record, void* registration, PCONTEXT context, void* dispatcher) {
+		PLOGE << "------ Exception Handled ------";
+		PLOGE << "Exception Code: 0x" << std::setfill('0') << std::setw(8) << std::hex << exception_record->ExceptionCode;
+		PLOGE << "Exception Address: 0x" << std::setfill('0') << std::setw(8) << std::hex << exception_record->ExceptionAddress;
+		PLOGE << "Eax: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Eax << "\tEcx: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Ecx;
+		PLOGE << "Edx: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Edx << "\tEbx: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Ebx;
+		PLOGE << "Esp: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Esp << "\tEbp: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Ebp;
+		PLOGE << "Esi: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Esi << "\tEdi: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->Edi;
+		PLOGE << "EFlags: 0x" << std::setfill('0') << std::setw(8) << std::hex << context->EFlags;
+		PLOGE << "ZF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::ZF) != 0) << "\tPF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::PF) != 0) << "\tAF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::AF) != 0);
+		PLOGE << "OF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::OF) != 0) << "\tSF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::SF) != 0) << "\tDF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::DF) != 0);
+		PLOGE << "CF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::CF) != 0) << "\tTF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::TF) != 0) << "\tIF:" << ((context->EFlags & mebius::inline_hook::MBEFlags::IF) != 0);
+		PLOGE << "-------------------------------";
 
-	void init_plugin(mebius::inline_hook::PMBCONTEXT context) {
+		mebius::ShowErrorDialog(std::format("Exception occurred!", uint32_t(exception_record->ExceptionAddress)).c_str());
+	}
+
+	void init(mebius::inline_hook::PMBCONTEXT context) {
 		mebius::inline_hook::HookInline(ModeSelect, 0x10A3, patch::change_version);
+
+		mebius::hook::HookOnHead(__except_handler3, exception_logger);
 
 		if (conf.Options.AutoUpdate == true) {
 			auto U = mebius::updater::Updater("takexaz/Mebius", "Mebius.dll", std::format("{}.{}.{}", VERSION_X, VERSION_Y, VERSION_Z));
@@ -79,7 +100,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		if (conf.Console.Enable) {
 			mebius::debug::Console::get_instance();
 		}
-
 
 		switch (conf.Console.Detail)
 		{
@@ -115,7 +135,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		}
 
 		// プラグインロード用インラインフック(VEH)
-		mebius::inline_hook::HookInline((void*)patch_addr, 0, patch::init_plugin);
+		mebius::inline_hook::HookInline((void*)patch_addr, 0, patch::init);
 
 		break;
 	}
