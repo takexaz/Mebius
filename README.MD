@@ -7,9 +7,9 @@ Mebius
 * [MebiusLoader](https://github.com/takexaz/MebiusLoader/releases/latest)
 
 ## Installation
-1. winmugen.exeがあるディレクトリに[DINPUT.dll](https://github.com/takexaz/MebiusLoader/releases/latest)を配置
-2. modsディレクトリを作成し、[Mebius.toml](https://github.com/takexaz/Mebius/releases/latest)ファイルを配置
-3. [Mebius.dll](https://github.com/takexaz/Mebius/releases/latest)ファイルを配置
+1. winmugen.exeがあるディレクトリに[DINPUT.dll](https://github.com/takexaz/MebiusLoader/releases/latest/download/DINPUT.dll)を配置
+2. modsディレクトリを作成し、[Mebius.toml](https://github.com/takexaz/Mebius/releases/download/0.0.2/Mebius.toml)ファイルを配置
+3. [Mebius.dll](https://github.com/takexaz/Mebius/releases/latest/download/Mebius.dll)ファイルを配置
 ```
 root
 └mods
