@@ -83,12 +83,15 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 	case DLL_PROCESS_ATTACH: {
 		// ConfigÇì«Ç›çûÇÒÇ≈äeéÌê›íËÇçsÇ§
 		mebius::config::Config mb_config(conf_mebius_path);
-		mb_config.get_value_from_key("Options.Enable", conf.Options.Enable);
-		mb_config.get_value_from_key("Options.BypassCheckSum", conf.Options.BypassCheckSum);
-		mb_config.get_value_from_key("Options.AutoUpdate", conf.Options.AutoUpdate);
-		mb_config.get_value_from_key("Console.Enable", conf.Console.Enable);
-		mb_config.get_value_from_key("Console.Level", conf.Console.Level);
-		mb_config.get_value_from_key("Console.Detail", conf.Console.Detail);
+		if (!mb_config.is_loaded()) {
+			mebius::ShowErrorDialog(std::format("Could not found {}", conf_mebius_path).c_str());
+		}
+		conf.Options.Enable = mb_config.get_bool("Options.Enable").value_or(false);
+		conf.Options.BypassCheckSum = mb_config.get_bool("Options.BypassCheckSum").value_or(false);
+		conf.Options.AutoUpdate = mb_config.get_bool("Options.AutoUpdate").value_or(false);
+		conf.Console.Enable = mb_config.get_bool("Console.Enable").value_or(false);
+		conf.Console.Level = mb_config.get_int("Console.Level").value_or(6);
+		conf.Console.Detail = mb_config.get_int("Console.Detail").value_or(0);
 
 		// MebiusÇ™ñ≥å¯Ç»ÇÁì«Ç›çûÇ›èIóπ
 		if (!conf.Options.Enable) return TRUE;

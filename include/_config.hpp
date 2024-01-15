@@ -6,27 +6,30 @@
 
 namespace mebius::config {
 	class Config::ConfigImpl {
+	private:
+		std::optional<toml::table> _tbl;
 	public:
-		ConfigImpl(const char* path) : _tbl(toml::parse_file(path)) {}
-
-		template <typename T>
-		bool get_value_from_key_impl(const char* key, T& ptr) noexcept {
+		ConfigImpl(const char* path) 
+		{
 			try {
-				auto node = _tbl.at_path(key);
-				if (node.is<T>()) {
-					ptr = node.ref<T>();
-					return true;
-				}
-				PLOGE << "[" << key << "] type mismatch.";
-				return false;
+				_tbl = toml::parse_file(path);
 			}
 			catch (const toml::parse_error& err)
 			{
-				PLOGE << err.what();
-				return false;
+				_tbl = std::nullopt;
 			}
 		}
-	private:
-		toml::table _tbl;
+
+		bool is_loaded(void) {
+			return _tbl.has_value();
+		}
+
+		template <typename T>
+		std::optional<T> get_value(const char* key) noexcept {
+			if (_tbl.has_value()) {
+				return _tbl.value().at_path(key).value<T>();
+			}
+			return std::nullopt;
+		}
 	};
 }
