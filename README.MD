@@ -23,11 +23,11 @@ root
 
 ## Credits
 - [plog](https://github.com/SergiusTheBest/plog)
-    - [MIT](deps/plog/LICENSE)
+    - [MIT](https://github.com/SergiusTheBest/plog/blob/199734337bec45e72956c4e82f848a716cbf7ac3/LICENSE)
 - [tomlplusplus](https://github.com/marzer/tomlplusplus)
-    - [MIT](deps/tomlplusplus/LICENSE)
+    - [MIT](https://github.com/marzer/tomlplusplus/blob/d8fa9a1fddc90254cac2366dde23f0b613bc1280/LICENSE)
 - [zydis](https://github.com/zyantific/zydis)
-    - [MIT](deps/zydis/LICENSE)
+    - [MIT](https://github.com/zyantific/zydis/blob/ba1e3cf3a64f668790164c005d1ee52f3d77cf76/LICENSE)
 
 ## Special Thanks
 <table id='credit'>
