@@ -4,7 +4,7 @@ Mebius
 
 ## Requirements
 * [Microsoft Visual C++ 再頒布可能パッケージ(x86)](https://aka.ms/vs/17/release/vc_redist.x86.exe)
-* [MebiusLoader](https://github.com/takexaz/MebiusLoader/releases/latest)
+* [MebiusLoader](https://github.com/takexaz/MebiusLoader)
 
 ## Installation
 1. winmugen.exeがあるディレクトリに[DINPUT.dll](https://github.com/takexaz/MebiusLoader/releases/latest/download/DINPUT.dll)を配置
