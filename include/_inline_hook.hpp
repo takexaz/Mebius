@@ -5,10 +5,10 @@
 #include <unordered_map>
 
 
-// ƒNƒbƒVƒ‡ƒ“
+// ã‚¯ãƒƒã‚·ãƒ§ãƒ³
 extern "C" void hook_inline_cushion();
 extern "C" void hook_inline_cushion_unsafe();
-// ASM—p‚ÉéŒ¾
+// ASMç”¨ã«å®£è¨€
 extern "C" inline const void hook_inline(const mebius::inline_hook::PMBCONTEXT context);
 extern "C" inline const void hook_inline_unsafe(const mebius::inline_hook::PMBCONTEXT context);
 

@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 3.23.2)
 
 # プロジェクト名
-project (Mebius VERSION 0.0.7)
+project (Mebius VERSION 0.0.8)
 
 # 使用する言語
 enable_language(CXX)

@@ -17,7 +17,7 @@
 
 using namespace mebius::util;
 
-//d ¡ŒãƒAƒbƒvƒf[ƒ^[‚ğì‚é
+//d ä»Šå¾Œã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ãƒ¼ã‚’ä½œã‚‹
 namespace mebius::updater {
     class Updater {
     private:
@@ -65,7 +65,7 @@ namespace mebius::updater {
             std::regex pattern("\"tag_name\":\\s*\"([^\"]*)\"");
             std::smatch match;
             if (std::regex_search(str, match, pattern)) {
-                // ƒ}ƒbƒ`‚µ‚½•”•ª‚ğo—Í
+                // ãƒãƒƒãƒã—ãŸéƒ¨åˆ†ã‚’å‡ºåŠ›
                 PLOGD << "tag_name: " << match[1];
                 return match[1];
             }

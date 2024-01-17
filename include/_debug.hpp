@@ -23,10 +23,4 @@ namespace mebius::debug {
             return _instance;
         }
     };
-
-    static LONG __stdcall exception_logger(_EXCEPTION_POINTERS* ExceptionInfo) noexcept {
-
-        PLOGE << "Exception Code: " << ExceptionInfo->ExceptionRecord->ExceptionAddress;
-        PLOGE << "Exception Code: " << ExceptionInfo->ExceptionRecord->ExceptionCode;
-    }
 }

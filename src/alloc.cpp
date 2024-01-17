@@ -83,7 +83,7 @@ inline code_t* mebius::alloc::CodeAllocator::AllocateFromSmallPool() noexcept
 			break;
 		}
 	}
-	// ‘Ssmall poolŒÍŠ‰Žž
+	// å…¨small poolæž¯æ¸‡æ™‚
 	if (mem == nullptr) {
 		try {
 			auto& p = AppendSmallPool();
@@ -106,7 +106,7 @@ inline code_t* mebius::alloc::CodeAllocator::AllocateFromLargePool() noexcept
 			break;
 		}
 	}
-	// ‘Slarge poolŒÍŠ‰Žž
+	// å…¨large poolæž¯æ¸‡æ™‚
 	if (mem == nullptr) {
 		try {
 			auto& p = AppendLargePool();

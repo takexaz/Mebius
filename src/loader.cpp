@@ -7,12 +7,12 @@ namespace mebius::loader {
 
         for (const auto& entry : std::filesystem::directory_iterator(dir_path)) {
             if (entry.is_directory() && is_recursive) {
-                // 再帰的にサブディレクトリを探索
+                // 蜀榊ｸｰ逧�縺ｫ繧ｵ繝悶ョ繧｣繝ｬ繧ｯ繝医Μ繧呈爾邏｢
                 auto sub_dir = listup_file_paths_in_dir(entry.path().string(), extension);
                 paths.insert(paths.end(), sub_dir.begin(), sub_dir.end());
             }
             else if (entry.is_regular_file() && entry.path().extension() == "." + extension) {
-                // ファイルのパスをリストに追加
+                // 繝輔ぃ繧､繝ｫ縺ｮ繝代せ繧偵Μ繧ｹ繝医↓霑ｽ蜉
                 paths.push_back(entry.path().string());
             }
         }

@@ -116,7 +116,7 @@ static inline std::pair<bool, InlineHookDataImpl&> add_inline_hook_data(uint32_t
 }
 
 
-// CALL—p‚ÌHOOKŽÀs(Unsafe)
+// CALLç”¨ã®HOOKå®Ÿè¡Œ(Unsafe)
 extern "C" inline const void hook_inline(const PMBCONTEXT context) {
 	auto hook = _GetInlineHookDataNullable(context->Eip);
 	if (!hook) {
@@ -139,7 +139,7 @@ extern "C" inline const void hook_inline(const PMBCONTEXT context) {
 	return;
 }
 
-// VEH—p‚ÌHOOKŽÀs(Unsafe)
+// VEHç”¨ã®HOOKå®Ÿè¡Œ(Unsafe)
 static LONG __stdcall hook_inline_veh(_EXCEPTION_POINTERS* ExceptionInfo) noexcept
 {
 	if (ExceptionInfo->ExceptionRecord->ExceptionCode == STATUS_PRIVILEGED_INSTRUCTION) {
@@ -196,7 +196,7 @@ static LONG __stdcall hook_inline_veh(_EXCEPTION_POINTERS* ExceptionInfo) noexce
 	}
 }
 
-// CALL—p‚ÌHOOKŽÀs(Unsafe)
+// CALLç”¨ã®HOOKå®Ÿè¡Œ(Unsafe)
 extern "C" inline const void hook_inline_unsafe(const PMBCONTEXT context) {
 	auto hook = _GetInlineHookDataNullable(context->Eip);
 	if (!hook) {
@@ -218,7 +218,7 @@ extern "C" inline const void hook_inline_unsafe(const PMBCONTEXT context) {
 	return;
 }
 
-// VEH—p‚ÌHOOKŽÀs(Unsafe)
+// VEHç”¨ã®HOOKå®Ÿè¡Œ(Unsafe)
 static LONG __stdcall hook_inline_veh_unsafe(_EXCEPTION_POINTERS* ExceptionInfo) noexcept
 {
 	if (ExceptionInfo->ExceptionRecord->ExceptionCode == STATUS_PRIVILEGED_INSTRUCTION) {

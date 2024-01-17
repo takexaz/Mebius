@@ -9,7 +9,6 @@
 #include <iostream>
 #include <format>
 
-
 static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
 static auto __except_handler3 = reinterpret_cast<int (*)(PEXCEPTION_RECORD exception_record, void* registration, PCONTEXT context, void* dispatcher)>(0x496150);
 static auto ErrorExit = reinterpret_cast<void (*)(void)>(0x415860);
@@ -74,13 +73,13 @@ namespace patch {
 	}
 
 	void init(mebius::inline_hook::PMBCONTEXT context) {
-		// ƒo[ƒWƒ‡ƒ“•\‹L‚ð•ÏX
+		// ãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨è¨˜ã‚’å¤‰æ›´
 		mebius::inline_hook::HookInline(ModeSelect, 0x10A3, patch::change_version);
 
-		// —áŠO‚ðƒƒO
+		// ä¾‹å¤–ã‚’ãƒ­ã‚°
 		mebius::hook::HookOnHead(__except_handler3, exception_logger);
 
-		// ƒGƒ‰[ƒƒbƒZ[ƒW‚ðƒƒO
+		// ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒ­ã‚°
 		mebius::inline_hook::HookInline(ErrorExit, 0x1FC, error_logger);
 
 
@@ -98,7 +97,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 	switch (fdwReason)
 	{
 	case DLL_PROCESS_ATTACH: {
-		// Config‚ð“Ç‚Ýž‚ñ‚ÅŠeŽíÝ’è‚ðs‚¤
+		// Configã‚’èª­ã¿è¾¼ã‚“ã§å„ç¨®è¨­å®šã‚’è¡Œã†
 		mebius::config::Config mb_config(conf_mebius_path);
 		if (!mb_config.is_loaded()) {
 			mebius::ShowErrorDialog(std::format("Could not found {}", conf_mebius_path).c_str());
@@ -110,10 +109,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		conf.Console.Level = mb_config.get_int("Console.Level").value_or(6);
 		conf.Console.Detail = mb_config.get_int("Console.Detail").value_or(0);
 
-		// Mebius‚ª–³Œø‚È‚ç“Ç‚Ýž‚ÝI—¹
+		// MebiusãŒç„¡åŠ¹ãªã‚‰èª­ã¿è¾¼ã¿çµ‚äº†
 		if (!conf.Options.Enable) return TRUE;
 
-		// ƒRƒ“ƒ\[ƒ‹‚ª—LŒø‚È‚ç•\Ž¦
+		// ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ãŒæœ‰åŠ¹ãªã‚‰è¡¨ç¤º
 		if (conf.Console.Enable) {
 			mebius::debug::Console::get_instance();
 		}
@@ -140,7 +139,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 		}
 		}
 
-		// MUGEN‚Ìƒo[ƒWƒ‡ƒ“‚ðƒ`ƒFƒbƒN
+		// MUGENã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’ãƒã‚§ãƒƒã‚¯
 		uint32_t patch_addr = mebius::util::detect_mugen();
 		if (patch_addr == 0xFFFFFFFF && conf.Options.BypassCheckSum) {
 			PLOGW << "Bypass CheckSum!";
@@ -151,10 +150,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  fdwReason, LPVOID lpReserved)
 			return TRUE;
 		}
 
-		// Mebius‹N“®ƒƒO‚ð•\Ž¦
+		// Mebiusèµ·å‹•ãƒ­ã‚°ã‚’è¡¨ç¤º
 		PLOGD << "Initializing Mebius.";
 
-		// ƒvƒ‰ƒOƒCƒ“ƒ[ƒh—pƒCƒ“ƒ‰ƒCƒ“ƒtƒbƒN(VEH)
+		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ­ãƒ¼ãƒ‰ç”¨ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³ãƒ•ãƒƒã‚¯(VEH)
 		mebius::inline_hook::HookInline((void*)patch_addr, 0, patch::init);
 
 		break;

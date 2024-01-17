@@ -7,66 +7,71 @@
 #define BUFSIZE 1024
 #define MD5LEN  16
 
-std::string mebius::util::get_module_directory(HMODULE hModule) {
-    // •Ô‹p’l
-    CString res = (LPCTSTR)nullptr;
-    // ƒpƒXAƒhƒ‰ƒCƒu–¼AƒfƒBƒŒƒNƒgƒŠ–¼Aƒtƒ@ƒCƒ‹–¼AŠg’£q
-    TCHAR path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
-    // ƒtƒ‹ƒpƒX‚ğæ“¾
-    if (GetModuleFileName(hModule, path, _MAX_PATH) != 0)
+std::string get_root_directory(void) {
+    // è¿”å´å€¤
+    std::string str_path;
+    // ãƒ‘ã‚¹ã€ãƒ‰ãƒ©ã‚¤ãƒ–åã€ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã€ãƒ•ã‚¡ã‚¤ãƒ«åã€æ‹¡å¼µå­
+    char path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
+    // ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’å–å¾—
+    if (GetModuleFileNameA(GetModuleHandleA(NULL), path, _MAX_PATH) != 0)
     {
-        // ƒtƒ@ƒCƒ‹ƒpƒX‚ğ•ªŠ„
-        _tsplitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
-        // ƒhƒ‰ƒCƒu–¼‚ÆƒfƒBƒŒƒNƒgƒŠ–¼‚ğŒ‹‡
-        res = PathCombine(path, drive, dir);
+        // ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’åˆ†å‰²
+        _splitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
+        // ãƒ‰ãƒ©ã‚¤ãƒ–åã¨ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã‚’çµåˆ
+        str_path = PathCombineA(path, drive, dir);
     }
-    return CStringA(res).GetBuffer();
+    return str_path;
+}
+
+std::string mebius::util::get_module_directory(HMODULE hModule) {
+    // è¿”å´å€¤
+    std::string str_path;
+    // ãƒ‘ã‚¹ã€ãƒ‰ãƒ©ã‚¤ãƒ–åã€ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã€ãƒ•ã‚¡ã‚¤ãƒ«åã€æ‹¡å¼µå­
+    char path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
+    // ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’å–å¾—
+    if (GetModuleFileNameA(hModule, path, _MAX_PATH) != 0)
+    {
+        // ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’åˆ†å‰²
+        _splitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
+        // ãƒ‰ãƒ©ã‚¤ãƒ–åã¨ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã‚’çµåˆ
+        str_path = PathCombineA(path, drive, dir);
+    }
+
+    return str_path.substr(get_root_directory().length());
 }
 
 std::string mebius::util::get_module_filename(HMODULE hModule) {
-    // •Ô‹p’l
-    CString res = (LPCTSTR)nullptr;
-    // ƒpƒXAƒhƒ‰ƒCƒu–¼AƒfƒBƒŒƒNƒgƒŠ–¼Aƒtƒ@ƒCƒ‹–¼AŠg’£q
-    TCHAR path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
-    // ƒtƒ‹ƒpƒX‚ğæ“¾
-    if (GetModuleFileName(hModule, path, _MAX_PATH) != 0)
+    // è¿”å´å€¤
+    std::string str_path;
+    // ãƒ‘ã‚¹ã€ãƒ‰ãƒ©ã‚¤ãƒ–åã€ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã€ãƒ•ã‚¡ã‚¤ãƒ«åã€æ‹¡å¼µå­
+    char path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
+    // ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’å–å¾—
+    if (GetModuleFileNameA(hModule, path, _MAX_PATH) != 0)
     {
-        // ƒtƒ@ƒCƒ‹ƒpƒX‚ğ•ªŠ„
-        _tsplitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
-        // ƒhƒ‰ƒCƒu–¼‚ÆƒfƒBƒŒƒNƒgƒŠ–¼‚ğŒ‹‡
-        res = file;
-        res += ext;
+        // ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’åˆ†å‰²
+        _splitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
+        // ãƒ‰ãƒ©ã‚¤ãƒ–åã¨ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã‚’çµåˆ
+        str_path = file;
+        str_path += ext;
     }
-    return CStringA(res).GetBuffer();
+    return str_path;
 }
 
-std::string mebius::util::get_module_path(HMODULE hModule) {
-    // •Ô‹p’l
-    CString res = (LPCTSTR)nullptr;
-    // ƒpƒXAƒhƒ‰ƒCƒu–¼AƒfƒBƒŒƒNƒgƒŠ–¼Aƒtƒ@ƒCƒ‹–¼AŠg’£q
-    TCHAR path[_MAX_PATH], drive[_MAX_PATH], dir[_MAX_PATH], file[_MAX_PATH], ext[_MAX_PATH];
-    // ƒtƒ‹ƒpƒX‚ğæ“¾
-    if (GetModuleFileName(hModule, path, _MAX_PATH) != 0)
-    {
-        // ƒtƒ@ƒCƒ‹ƒpƒX‚ğ•ªŠ„
-        _tsplitpath_s(path, drive, _MAX_PATH, dir, _MAX_PATH, file, _MAX_PATH, ext, _MAX_PATH);
-        // ƒhƒ‰ƒCƒu–¼‚ÆƒfƒBƒŒƒNƒgƒŠ–¼‚ğŒ‹‡
-        res = path;
-    }
-    return CStringA(res).GetBuffer();
+std::string mebius::util::get_module_path(HMODULE hModule)
+{
+    return get_module_directory(hModule) + get_module_filename(hModule);
 }
-
 
 uint32_t mebius::util::detect_mugen(void) {
-    // ƒnƒbƒVƒ…‚ğŒvZ
+    // ãƒãƒƒã‚·ãƒ¥ã‚’è¨ˆç®—
     std::string md5 = calc_md5_self();
 
-    // ƒnƒbƒVƒ…ƒƒO‚ğ•\¦
+    // ãƒãƒƒã‚·ãƒ¥ãƒ­ã‚°ã‚’è¡¨ç¤º
     if (md5.empty()) {
         return false;
     }
 
-    // Àsƒtƒ@ƒCƒ‹‚ÌƒnƒbƒVƒ…‚©‚ç–{‘Ì‚ğ¯•Ê
+    // å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒƒã‚·ãƒ¥ã‹ã‚‰æœ¬ä½“ã‚’è­˜åˆ¥
     try {
         auto result = MUGEN_HASH_LIST.at(md5);
         PLOGD << "Registered WINMUGEN: " << result.first;
