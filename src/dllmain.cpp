@@ -12,6 +12,7 @@
 
 static auto ModeSelect = reinterpret_cast<void (*)(void)>(0x42f0c0);
 static auto __except_handler3 = reinterpret_cast<int (*)(PEXCEPTION_RECORD exception_record, void* registration, PCONTEXT context, void* dispatcher)>(0x496150);
+static auto ErrorExit = reinterpret_cast<void (*)(void)>(0x415860);
 
 struct CF_MEBIUS {
 	struct CF_OPTIONS {
@@ -61,11 +62,27 @@ namespace patch {
 
 		mebius::ShowErrorDialog(std::format("Exception occurred!", uint32_t(exception_record->ExceptionAddress)).c_str());
 	}
+	
+	void error_logger(mebius::inline_hook::PMBCONTEXT context) {
+		void** stack = (void**)context->Esp;
+		const char* title = (const char*)*(stack + 2);
+		const char* message = (const char*)*(stack + 1);
+		PLOGE << "";
+		PLOGE << title;
+		PLOGE << "-------------------------------";
+		PLOGE << message;
+	}
 
 	void init(mebius::inline_hook::PMBCONTEXT context) {
+		// バージョン表記を変更
 		mebius::inline_hook::HookInline(ModeSelect, 0x10A3, patch::change_version);
 
+		// 例外をログ
 		mebius::hook::HookOnHead(__except_handler3, exception_logger);
+
+		// エラーメッセージをログ
+		mebius::inline_hook::HookInline(ErrorExit, 0x1FC, error_logger);
+
 
 		if (conf.Options.AutoUpdate == true) {
 			auto U = mebius::updater::Updater("takexaz/Mebius", GetCurrentModule(), std::format("{}.{}.{}", PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH));
