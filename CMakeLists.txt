@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 3.23.2)
 
 # プロジェクト名
-project (Mebius VERSION 0.0.6)
+project (Mebius VERSION 0.0.7)
 
 # 使用する言語
 enable_language(CXX)
@@ -171,10 +171,5 @@ install (
 target_link_libraries (
 	${PROJECT_NAME}
 	PRIVATE
-	$<$<CONFIG:Debug>:
-		Urlmon.lib
-	>
-	$<$<CONFIG:Release>:
-		Urlmon.lib
-	>
+	Urlmon.lib
 )
