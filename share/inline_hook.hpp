@@ -54,6 +54,7 @@ namespace mebius::inline_hook {
 	MEBIUSAPI const InlineHookData& _GetInlineHookData(uint32_t address);
 	MEBIUSAPI const InlineHookData* _GetInlineHookDataNullable(uint32_t address) noexcept;
 	MEBIUSAPI void _SetInlineHook(uint32_t hookTarget, const void* hookFunction, bool isVEH) noexcept;
+	MEBIUSAPI void _SetInlineHookUnsafe(uint32_t hookTarget, const void* hookFunction, bool isVEH) noexcept;
 
 	namespace internal {
 		using pvfc_t = void(*)(PMBCONTEXT);
@@ -61,7 +62,13 @@ namespace mebius::inline_hook {
 	static void HookInline(void* address, uint32_t offset, const internal::pvfc_t callee) noexcept {
 		_SetInlineHook((uint32_t)address + offset, std::bit_cast<const void*>(callee), false);
 	}
-	static void HookInline(uint32_t address, uint32_t offset, const internal::pvfc_t callee, bool isVEH) noexcept {
+	static void HookInline(void* address, uint32_t offset, const internal::pvfc_t callee, bool isVEH) noexcept {
 		_SetInlineHook((uint32_t)address + offset, std::bit_cast<const void*>(callee), isVEH);
+	}
+	static void HookInlineUnsafe(void* address, uint32_t offset, const internal::pvfc_t callee) noexcept {
+		_SetInlineHookUnsafe((uint32_t)address + offset, std::bit_cast<const void*>(callee), false);
+	}
+	static void HookInlineUnsafe(void* address, uint32_t offset, const internal::pvfc_t callee, bool isVEH) noexcept {
+		_SetInlineHookUnsafe((uint32_t)address + offset, std::bit_cast<const void*>(callee), isVEH);
 	}
 }

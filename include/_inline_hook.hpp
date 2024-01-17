@@ -7,8 +7,10 @@
 
 // クッション
 extern "C" void hook_inline_cushion();
+extern "C" void hook_inline_cushion_unsafe();
 // ASM用に宣言
 extern "C" inline const void hook_inline(const mebius::inline_hook::PMBCONTEXT context);
+extern "C" inline const void hook_inline_unsafe(const mebius::inline_hook::PMBCONTEXT context);
 
 namespace mebius::inline_hook {
 	using code_t = uint8_t;

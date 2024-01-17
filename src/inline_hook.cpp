@@ -15,6 +15,7 @@ using namespace mebius::inline_hook;
 static inline code_t* make_trampoline_code_inline(uint32_t address) noexcept;
 static inline std::pair<bool, InlineHookDataImpl&> add_inline_hook_data(uint32_t address) noexcept;
 static LONG WINAPI hook_inline_veh(struct _EXCEPTION_POINTERS* ExceptionInfo) noexcept;
+static LONG WINAPI hook_inline_veh_unsafe(struct _EXCEPTION_POINTERS* ExceptionInfo) noexcept;
 static inline void write_halt_opcode(uint32_t address);
 static inline void write_call_opcode(uint32_t address, const void* func);
 static inline void write_jmp_opcode(uint32_t address, const void* func) noexcept;
@@ -46,10 +47,29 @@ MEBIUSAPI void mebius::inline_hook::_SetInlineHook(uint32_t hookTarget, const vo
 	if (unhooked) {
 		try {
 			if (isVEH) {
+				static PVOID handle = AddVectoredExceptionHandler(TRUE, hook_inline_veh);
 				write_halt_opcode(hookTarget);
 			}
 			else {
 				write_call_opcode(hookTarget, hook_inline_cushion);
+			}
+		}
+		catch (const MebiusError& e) {
+			ShowErrorDialog(e.what());
+		}
+	}
+}
+MEBIUSAPI void mebius::inline_hook::_SetInlineHookUnsafe(uint32_t hookTarget, const void* hookFunction, bool isVEH) noexcept {
+	auto [unhooked, hook] = add_inline_hook_data(hookTarget);
+	hook.AppendInlineHook(hookFunction);
+	if (unhooked) {
+		try {
+			if (isVEH) {
+				static PVOID handle = AddVectoredExceptionHandler(TRUE, hook_inline_veh_unsafe);
+				write_halt_opcode(hookTarget);
+			}
+			else {
+				write_call_opcode(hookTarget, hook_inline_cushion_unsafe);
 			}
 		}
 		catch (const MebiusError& e) {
@@ -88,7 +108,6 @@ static inline std::pair<bool, InlineHookDataImpl&> add_inline_hook_data(uint32_t
 	decltype(_INLINE_HOOK_LIST)::iterator it = _INLINE_HOOK_LIST.find(address);
 	if (it == _INLINE_HOOK_LIST.end()) {
 		decltype(_INLINE_HOOK_LIST)::iterator item = std::get<0>(_INLINE_HOOK_LIST.emplace(address, address));
-		AddVectoredExceptionHandler(TRUE, hook_inline_veh);
 		return { true, item->second };
 	}
 	else {
@@ -96,22 +115,99 @@ static inline std::pair<bool, InlineHookDataImpl&> add_inline_hook_data(uint32_t
 	}
 }
 
-// JMP用のHOOK実行
+
+// CALL用のHOOK実行(Unsafe)
 extern "C" inline const void hook_inline(const PMBCONTEXT context) {
 	auto hook = _GetInlineHookDataNullable(context->Eip);
 	if (!hook) {
 		return;
 	}
 
-	// uint32_t _esp = context->Esp;
+	uint32_t _esp = context->Esp;
 	uint32_t _eip = context->Eip;
 
 	for (auto&& f : hook->GetInlineHooks()) {
 		auto inline_function = std::bit_cast<internal::pvfc_t>(f);
 		inline_function(context);
 
-		// context->Esp = _esp;
-		// context->Eip = _eip;
+		context->Esp = _esp;
+		context->Eip = _eip;
+	}
+
+	auto trampoline = std::bit_cast<DWORD>(hook->GetTrampolineCode());
+	context->Eip = trampoline;
+	return;
+}
+
+// VEH用のHOOK実行(Unsafe)
+static LONG __stdcall hook_inline_veh(_EXCEPTION_POINTERS* ExceptionInfo) noexcept
+{
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == STATUS_PRIVILEGED_INSTRUCTION) {
+		auto hook = _GetInlineHookDataNullable(ExceptionInfo->ContextRecord->Eip);
+		if (!hook) {
+			return EXCEPTION_CONTINUE_SEARCH;
+		}
+
+		uint32_t _eip = ExceptionInfo->ContextRecord->Eip;
+		uint32_t _esp = ExceptionInfo->ContextRecord->Esp;
+
+		MBCONTEXT context = {
+		ExceptionInfo->ContextRecord->EFlags,
+		ExceptionInfo->ContextRecord->Edi,
+		ExceptionInfo->ContextRecord->Esi,
+		ExceptionInfo->ContextRecord->Ebp,
+		ExceptionInfo->ContextRecord->Esp,
+		ExceptionInfo->ContextRecord->Ebx,
+		ExceptionInfo->ContextRecord->Edx,
+		ExceptionInfo->ContextRecord->Ecx,
+		ExceptionInfo->ContextRecord->Eax,
+		ExceptionInfo->ContextRecord->Eip,
+		};
+
+
+		for (auto&& f : hook->GetInlineHooks()) {
+			auto inline_function = std::bit_cast<internal::pvfc_t>(f);
+			inline_function(&context);
+
+			context.Eip = _eip;
+			context.Esp = _esp;
+		}
+
+		// Restore
+		{
+			ExceptionInfo->ContextRecord->EFlags = context.EFlags;
+			ExceptionInfo->ContextRecord->Edi = context.Edi;
+			ExceptionInfo->ContextRecord->Esi = context.Esi;
+			ExceptionInfo->ContextRecord->Ebp = context.Ebp;
+			ExceptionInfo->ContextRecord->Ebx = context.Ebx;
+			ExceptionInfo->ContextRecord->Edx = context.Edx;
+			ExceptionInfo->ContextRecord->Ecx = context.Ecx;
+			ExceptionInfo->ContextRecord->Eax = context.Eax;
+		}
+
+		auto trampoline = std::bit_cast<DWORD>(hook->GetTrampolineCode());
+		ExceptionInfo->ContextRecord->Eip = trampoline;
+
+
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+	else {
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+}
+
+// CALL用のHOOK実行(Unsafe)
+extern "C" inline const void hook_inline_unsafe(const PMBCONTEXT context) {
+	auto hook = _GetInlineHookDataNullable(context->Eip);
+	if (!hook) {
+		return;
+	}
+	
+	uint32_t _eip = context->Eip;
+
+	for (auto&& f : hook->GetInlineHooks()) {
+		auto inline_function = std::bit_cast<internal::pvfc_t>(f);
+		inline_function(context);
 	}
 
 	// trampoline if not edit eip
@@ -122,17 +218,14 @@ extern "C" inline const void hook_inline(const PMBCONTEXT context) {
 	return;
 }
 
-// VEH用のHOOK実行
-static LONG __stdcall hook_inline_veh(_EXCEPTION_POINTERS* ExceptionInfo) noexcept
+// VEH用のHOOK実行(Unsafe)
+static LONG __stdcall hook_inline_veh_unsafe(_EXCEPTION_POINTERS* ExceptionInfo) noexcept
 {
-	if (ExceptionInfo->ExceptionRecord->ExceptionCode = STATUS_PRIVILEGED_INSTRUCTION) {
+	if (ExceptionInfo->ExceptionRecord->ExceptionCode == STATUS_PRIVILEGED_INSTRUCTION) {
 		auto hook = _GetInlineHookDataNullable(ExceptionInfo->ContextRecord->Eip);
 		if (!hook) {
 			return EXCEPTION_CONTINUE_SEARCH;
 		}
-
-		// uint32_t _esp = ExceptionInfo->ContextRecord->Esp;
-
 
 		MBCONTEXT context = {
 		ExceptionInfo->ContextRecord->EFlags,
@@ -150,14 +243,10 @@ static LONG __stdcall hook_inline_veh(_EXCEPTION_POINTERS* ExceptionInfo) noexce
 		for (auto&& f : hook->GetInlineHooks()) {
 			auto inline_function = std::bit_cast<internal::pvfc_t>(f);
 			inline_function(&context);
-
-			// context.Eip = _eip;
-			// context.Esp = _esp;
 		}
 
 		uint32_t _eip = ExceptionInfo->ContextRecord->Eip;
 
-		// Restore
 		{
 			ExceptionInfo->ContextRecord->EFlags = context.EFlags;
 			ExceptionInfo->ContextRecord->Edi = context.Edi;
