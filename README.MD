@@ -19,7 +19,7 @@ root
 └winmugen.exe
 ```
 ## License
-* [MIT](LICENSE.txt)
+* [MIT](LICENSE)
 
 ## Credits
 - [plog](https://github.com/SergiusTheBest/plog)
