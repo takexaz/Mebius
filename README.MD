@@ -42,7 +42,7 @@ root
             <a href="https://github.com/Minor2CCh">
                 <img src="https://github.com/Minor2CCh.png" width='140px'>
             </a>
-            <h4 align='center'><a href='https://twitter.com/i/user/1185504247565058049'>マイナー</a></h4>
+            <h4 align='center'><a href='https://twitter.com/i/user/1185504247565058049'>Minor</a></h4>
         </td>
         <td id='PL'>
             <a href="https://github.com/purpuraBib">
@@ -54,7 +54,7 @@ root
             <a href="https://github.com/Ryori514">
                 <img src="https://github.com/Ryori514.png" width='140px'>
             </a>
-            <h4 align='center'><a href='https://twitter.com/i/user/845146560887324673'>リョウリ/Ryori</a></h4>
+            <h4 align='center'><a href='https://twitter.com/i/user/845146560887324673'>Ryori</a></h4>
         </td>
     </tr>
 </table>
